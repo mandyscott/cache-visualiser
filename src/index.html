@@ -237,24 +237,6 @@
             position: relative;
         }
 
-        .node.client {
-            background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
-            border-color: #c4b5fd;
-            color: #2e1065;
-        }
-
-        .node.pop {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            border-color: #93c5fd;
-            color: #1e3a8a;
-        }
-
-        .node.origin {
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-            border-color: #67e8f9;
-            color: #164e63;
-        }
-
         .node-icon {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
@@ -281,39 +263,22 @@
             color: #94a3b8;
         }
 
-        .arrow-container {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 4px;
+        .flow-arrow {
             display: flex;
-            justify-content: center;
             align-items: center;
-            pointer-events: none;
-            transform: translateY(-50%);
-        }
-
-        .arrow {
-            flex: 1;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 100%);
+            justify-content: center;
             position: relative;
-            max-width: 200px;
-            margin: 0 1rem;
+            min-width: 100px;
         }
 
-        .arrow::after {
-            content: '▶';
-            position: absolute;
-            right: -12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #06b6d4;
-            font-size: 1.5rem;
+        .arrow-line {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .arrow-label {
+        .arrow-timing {
             position: absolute;
             top: -2rem;
             left: 50%;
@@ -328,117 +293,13 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
-        /* Timeline */
-        .timeline-container {
-            background: rgba(30, 30, 30, 0.6);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(100, 100, 100, 0.3);
-        }
-
-        .timeline-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #3b82f6;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
-
-        .timeline-bar {
-            height: 60px;
-            background: linear-gradient(90deg, #84cc16 0%, #06b6d4 50%, #3b82f6 100%);
-            border-radius: 30px;
-            position: relative;
-            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
-        }
-
-        .timeline-marker {
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            background: #fff;
-            border-radius: 50%;
-            border: 4px solid #1a1a1a;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
-        }
-
-        .timeline-label {
-            position: absolute;
-            top: -2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20, 20, 20, 0.95);
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            white-space: nowrap;
-            border: 1px solid rgba(100, 100, 100, 0.5);
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(30, 30, 30, 0.6);
-            border-radius: 16px;
-            padding: 1.5rem;
-            border: 1px solid rgba(100, 100, 100, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #3b82f6 0%, #06b6d4 100%);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .stat-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #fff;
-            word-break: break-all;
-        }
-
+        /* Cache Key Visual */
         .cache-key-visual {
             font-family: 'Courier New', monospace;
             font-size: 0.75rem;
             background: rgba(20, 20, 20, 0.9);
             padding: 1rem;
             border-radius: 8px;
-            margin-top: 0.5rem;
             border: 1px solid rgba(100, 100, 100, 0.3);
             display: flex;
             align-items: center;
@@ -448,6 +309,8 @@
         .fingerprint {
             font-size: 1.5rem;
         }
+
+
 
         @media (max-width: 768px) {
             body {
@@ -469,7 +332,7 @@
                 gap: 3rem;
             }
 
-            .arrow-container {
+            .flow-arrow {
                 display: none;
             }
         }
@@ -528,7 +391,7 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
         function parseFastlyDebugPath(pathHeader) {
             if (!pathHeader) return [];
             
-            const regex = /\(([A-Z])\s+([^\s]+)\s+(\d+)\)/g;
+            const regex = /\(([A-Z])\s+([^\s]+)\s+([\d.]+)\)/g;
             const paths = [];
             let match;
             
@@ -536,7 +399,7 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
                 paths.push({
                     type: match[1],
                     location: match[2],
-                    timestamp: match[3]
+                    timestamp: match[3]  // Keep as string, will parse as float later
                 });
             }
             
@@ -550,34 +413,33 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
             const result = {};
             
             parts.forEach(part => {
-                part = part.trim();
-                if (!part) return;
-                
                 if (part.startsWith('S')) {
                     result.startTime = parseFloat(part.substring(1));
                 } else if (part.startsWith('VS')) {
-                    result.vclStart = parseInt(part.substring(2), 10);
+                    result.vclStart = parseInt(part.substring(2));
                 } else if (part.startsWith('VE')) {
-                    result.vclEnd = parseInt(part.substring(2), 10);
+                    result.vclEnd = parseInt(part.substring(2));
                 }
             });
-
-            // Validate parsed values
-            if (result.vclStart !== undefined && isNaN(result.vclStart)) delete result.vclStart;
-            if (result.vclEnd !== undefined && isNaN(result.vclEnd)) delete result.vclEnd;
-            if (result.startTime !== undefined && isNaN(result.startTime)) delete result.startTime;
-
-            // Return null if no valid values were parsed
-            if (Object.keys(result).length === 0) return null;
-
+            
             return result;
         }
 
         function getStatusType(cacheStatus) {
             if (!cacheStatus) return 'pass';
-            const status = cacheStatus.split(',')[0].trim().toLowerCase();
-            if (status === 'hit') return 'hit';
-            if (status === 'miss') return 'miss';
+            
+            // Split all cache statuses and check if ANY tier has a HIT
+            const statuses = cacheStatus.split(',').map(s => s.trim().toLowerCase());
+            
+            if (statuses.some(status => status === 'hit')) {
+                return 'hit';
+            }
+            
+            // If no hits, check for misses
+            if (statuses.some(status => status === 'miss')) {
+                return 'miss';
+            }
+            
             return 'pass';
         }
 
@@ -600,7 +462,18 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
 
             // Status Hero
             const statusType = getStatusType(cacheStatus);
-            const statusText = cacheStatus ? cacheStatus.split(',')[0].trim() : 'UNKNOWN';
+            
+            // Determine the status text to display
+            let statusText = 'UNKNOWN';
+            if (cacheStatus) {
+                const statuses = cacheStatus.split(',').map(s => s.trim().toLowerCase());
+                if (statuses.some(status => status === 'hit')) {
+                    statusText = 'HIT';
+                } else {
+                    statusText = cacheStatus.split(',')[0].trim();
+                }
+            }
+            
             const statusClass = statusType;
 
             html += `
@@ -622,12 +495,7 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
             }
 
             if (cacheHits) {
-                const totalHits = cacheHits.split(',').reduce((sum, h) => {
-                    const trimmed = h.trim();
-                    if (trimmed === '') return sum + 0;
-                    const parsed = parseInt(trimmed);
-                    return sum + (isNaN(parsed) ? 0 : parsed);
-                }, 0);
+                const totalHits = cacheHits.split(',').reduce((sum, h) => sum + parseInt(h.trim() || 0), 0);
                 html += `
                     <div class="status-circle" style="background: radial-gradient(circle, #06b6d4 0%, #0891b2 100%); border-color: #67e8f9; color: #164e63;">
                         <div>${totalHits}</div>
@@ -643,121 +511,193 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
                 const pops = servedBy ? servedBy.split(',').map(s => s.trim()) : [];
                 const statuses = cacheStatus ? cacheStatus.split(',').map(s => s.trim()) : [];
                 
+                // Get request time if available
+                let requestTimeHtml = '';
+                if (debugPath.length > 0 || (timer && timer.startTime)) {
+                    let startTime, endTime;
+                    
+                    // Get start time from either debug path or x-timer
+                    if (debugPath.length > 0) {
+                        const firstPath = debugPath[0];
+                        startTime = new Date(parseFloat(firstPath.timestamp) * 1000);
+                    } else if (timer && timer.startTime) {
+                        startTime = new Date(timer.startTime * 1000);
+                    }
+                    
+                    // Calculate end time by adding VCL processing time to start time
+                    if (timer && timer.startTime && timer.vclEnd) {
+                        const endTimeMs = (timer.startTime * 1000) + timer.vclEnd;
+                        endTime = new Date(endTimeMs);
+                    } else if (debugPath.length > 0 && timer && timer.vclEnd) {
+                        // Use debugPath timestamp if timer.startTime not available
+                        const firstPath = debugPath[0];
+                        const endTimeMs = (parseFloat(firstPath.timestamp) * 1000) + timer.vclEnd;
+                        endTime = new Date(endTimeMs);
+                    }
+                    
+                    // Format options to include milliseconds
+                    const timeFormatOptions = {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        fractionalSecondDigits: 3,
+                        hour12: false
+                    };
+                    
+                    // Calculate difference if both times available
+                    let diffHtml = '';
+                    if (startTime && endTime) {
+                        const diffMs = endTime.getTime() - startTime.getTime();
+                        diffHtml = `
+                            <div style="margin-top: 0.5rem;">
+                                <span style="background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%); color: #fff; padding: 0.4rem 1rem; border-radius: 12px; font-weight: 700; font-size: 1rem; box-shadow: 0 2px 8px rgba(167, 139, 250, 0.4);">
+                                    ⏱️ Total Time: ${diffMs.toFixed(1)}ms
+                                </span>
+                            </div>
+                        `;
+                    }
+                    
+                    requestTimeHtml = `
+                        <div style="text-align: center; color: #94a3b8; font-size: 0.9rem; margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                                ${startTime ? `<div>🕐 <strong style="color: #3b82f6;">Start:</strong> ${startTime.toLocaleString('en-US', timeFormatOptions)}</div>` : ''}
+                                ${endTime ? `<div>🕐 <strong style="color: #06b6d4;">End:</strong> ${endTime.toLocaleString('en-US', timeFormatOptions)}</div>` : ''}
+                            </div>
+                            ${diffHtml}
+                        </div>
+                    `;
+                }
+                
+                // Get cache key if available
+                let cacheKeyHtml = '';
+                if (digest) {
+                    cacheKeyHtml = `
+                        <div style="text-align: center; margin-bottom: 1.5rem;">
+                            <div class="cache-key-visual" style="display: inline-flex; max-width: 600px;">
+                                <span class="fingerprint">🔐</span>
+                                <span style="flex: 1; word-break: break-all;">${digest}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Calculate timing per segment if available
+                let segmentTime = null;
+                if (timer && timer.vclEnd) {
+                    segmentTime = Math.round(timer.vclEnd / Math.max(pops.length + 1, 1));
+                }
+                
+                // Function to get node color based on status
+                function getNodeStyle(status) {
+                    const upperStatus = status.toUpperCase();
+                    if (upperStatus === 'HIT') {
+                        return {
+                            background: 'linear-gradient(135deg, #84cc16 0%, #65a30d 100%)',
+                            borderColor: '#a3e635',
+                            color: '#14532d'
+                        };
+                    } else if (upperStatus === 'MISS') {
+                        return {
+                            background: 'linear-gradient(135deg, #ff6b35 0%, #ef4444 100%)',
+                            borderColor: '#fca5a5',
+                            color: '#450a0a'
+                        };
+                    } else if (upperStatus === 'PASS') {
+                        return {
+                            background: 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+                            borderColor: '#94a3b8',
+                            color: '#f1f5f9'
+                        };
+                    } else {
+                        // Default for client or unknown
+                        return {
+                            background: 'linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)',
+                            borderColor: '#c4b5fd',
+                            color: '#2e1065'
+                        };
+                    }
+                }
+                
                 html += `
                     <div class="flow-container">
                         <h2 class="flow-title">🌍 Request Journey</h2>
+                        ${requestTimeHtml}
+                        ${cacheKeyHtml}
                         <div class="flow-diagram">
-                            <div class="flow-node">
-                                <div class="node client">
-                                    <div class="node-icon">👤</div>
-                                    <div class="node-label">Client</div>
-                                </div>
-                            </div>
+                `;
+                
+                // Add client node
+                const clientStyle = getNodeStyle('CLIENT');
+                html += `
+                    <div class="flow-node">
+                        <div class="node" style="background: ${clientStyle.background}; border-color: ${clientStyle.borderColor}; color: ${clientStyle.color};">
+                            <div class="node-icon">👤</div>
+                            <div class="node-label">Client</div>
+                        </div>
+                    </div>
                 `;
 
+                // Add arrow and POP nodes
                 pops.forEach((pop, index) => {
                     const status = statuses[index] || 'UNKNOWN';
-                    const hitsArray = cacheHits ? cacheHits.split(',') : [];
-                    const hits = hitsArray[index] ? hitsArray[index].trim() : '0';
+                    const hits = cacheHits ? cacheHits.split(',')[index].trim() : '0';
+                    
+                    // Determine if this is the origin (last node and MISS)
                     const isOrigin = index === pops.length - 1 && status.toUpperCase() === 'MISS';
+                    
+                    // Add arrow before this node
+                    const timingLabel = segmentTime ? `${segmentTime}ms` : '';
+                    html += `
+                        <div class="flow-arrow">
+                            <div class="arrow-line">
+                                <svg width="100" height="4" style="display: block;">
+                                    <defs>
+                                        <marker id="arrowhead-${index}" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                            <polygon points="0 0, 10 3, 0 6" fill="#06b6d4" />
+                                        </marker>
+                                    </defs>
+                                    <line x1="0" y1="2" x2="100" y2="2" stroke="url(#gradient-${index})" stroke-width="4" marker-end="url(#arrowhead-${index})" />
+                                    <defs>
+                                        <linearGradient id="gradient-${index}" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                ${timingLabel ? `<div class="arrow-timing">${timingLabel}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add the POP/Origin node
+                    const nodeStyle = isOrigin ? 
+                        {
+                            background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+                            borderColor: '#67e8f9',
+                            color: '#164e63'
+                        } : 
+                        getNodeStyle(status);
                     
                     html += `
                         <div class="flow-node">
-                            <div class="node ${isOrigin ? 'origin' : 'pop'}">
+                            <div class="node" style="background: ${nodeStyle.background}; border-color: ${nodeStyle.borderColor}; color: ${nodeStyle.color};">
                                 <div class="node-icon">${isOrigin ? '🏢' : '🌐'}</div>
                                 <div class="node-label">${pop}</div>
-                                <div class="node-detail">${status} | ${hits} hits</div>
+                                <div class="node-detail" style="color: ${nodeStyle.color}; opacity: 0.8;">${status} | ${hits} hits</div>
                             </div>
                         </div>
                     `;
                 });
 
-                // Add arrows with timing if available
-                if (timer && timer.vclEnd) {
-                    const segmentTime = Math.round(timer.vclEnd / Math.max(pops.length, 1));
-                    html += `
-                        <div class="arrow-container">
-                            <div class="arrow">
-                                <div class="arrow-label">${segmentTime}ms</div>
-                            </div>
-                        </div>
-                    `;
-                }
-
                 html += `</div></div>`;
             }
 
-            // Timeline
-            if (timer && timer.startTime) {
-                const vclTime = timer.vclEnd - timer.vclStart;
-                const totalTime = timer.vclEnd;
-                const vclStartPercent = (timer.vclStart / totalTime) * 100;
-                const vclEndPercent = (timer.vclEnd / totalTime) * 100;
 
-                html += `
-                    <div class="timeline-container">
-                        <h2 class="timeline-title">⏱️ Request Timeline</h2>
-                        <div class="timeline">
-                            <div class="timeline-bar">
-                                <div class="timeline-marker" style="left: 0%;">
-                                    <div class="timeline-label">Start<br>0ms</div>
-                                </div>
-                                <div class="timeline-marker" style="left: ${vclStartPercent}%;">
-                                    <div class="timeline-label">VCL Start<br>${timer.vclStart}ms</div>
-                                </div>
-                                <div class="timeline-marker" style="left: ${vclEndPercent}%;">
-                                    <div class="timeline-label">VCL End<br>${timer.vclEnd}ms</div>
-                                </div>
-                                <div class="timeline-marker" style="left: 100%;">
-                                    <div class="timeline-label">Complete<br>${totalTime}ms</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
 
-            // Stats Grid
-            html += `<div class="stats-grid">`;
 
-            if (digest) {
-                html += `
-                    <div class="stat-card">
-                        <div class="stat-icon">🔐</div>
-                        <div class="stat-label">Cache Key</div>
-                        <div class="cache-key-visual">
-                            <span class="fingerprint">👆</span>
-                            <span style="flex: 1;">${digest}</span>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (servedBy) {
-                const popCount = servedBy.split(',').length;
-                html += `
-                    <div class="stat-card">
-                        <div class="stat-icon">🗺️</div>
-                        <div class="stat-label">Cache Tiers</div>
-                        <div class="stat-value">${popCount} POP${popCount > 1 ? 's' : ''}</div>
-                    </div>
-                `;
-            }
-
-            if (debugPath.length > 0) {
-                const firstPath = debugPath[0];
-                const timestamp = parseInt(firstPath.timestamp, 10);
-                const date = !isNaN(timestamp) ? new Date(timestamp * 1000) : new Date();
-                html += `
-                    <div class="stat-card">
-                        <div class="stat-icon">🕐</div>
-                        <div class="stat-label">Request Time</div>
-                        <div class="stat-value" style="font-size: 0.9rem;">${date.toLocaleString()}</div>
-                    </div>
-                `;
-            }
-
-            html += `</div>`;
 
             document.getElementById('results').innerHTML = html;
             document.getElementById('results').classList.add('active');
