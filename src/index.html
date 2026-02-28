@@ -63,27 +63,25 @@
             font-size: 1.1rem;
         }
 
-        textarea {
+        input[type="url"] {
             width: 100%;
-            min-height: 150px;
-            padding: 1rem;
+            padding: 1rem 1.25rem;
             background: rgba(20, 20, 20, 0.9);
             border: 2px solid #404040;
             border-radius: 12px;
             color: #f1f5f9;
             font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            resize: vertical;
+            font-size: 1rem;
             transition: border-color 0.3s;
         }
 
-        textarea:focus {
+        input[type="url"]:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        textarea::placeholder {
+        input[type="url"]::placeholder {
             color: #64748b;
         }
 
@@ -347,17 +345,18 @@
         </header>
 
         <div class="input-section">
-            <label class="input-label" for="headers-input">
-                📋 Paste Your HTTP Headers
+            <label class="input-label" for="url-input">
+                🔗 Enter URL to Inspect
             </label>
-            <textarea 
-                id="headers-input" 
-                placeholder="Paste headers here, for example:
-fastly-debug-path: (D cache-wsi-ysbk1060028-WSI 1766557562) (F cache-wsi-ysbk1060026-WSI 1766557562)
-x-cache: MISS, MISS, MISS
-x-timer: S1766557562.572454,VS0,VE44"></textarea>
+            <input
+                type="url"
+                id="url-input"
+                placeholder="https://example.com/path"
+                autocomplete="off"
+                spellcheck="false"
+            />
             <div class="button-group">
-                <button class="btn-primary" onclick="analyzeHeaders()">🔍 Inspect Cache</button>
+                <button class="btn-primary" id="inspect-btn" onclick="analyzeHeaders()">🔍 Inspect Cache</button>
                 <button class="btn-secondary" onclick="clearAll()">Clear</button>
             </div>
         </div>
@@ -368,27 +367,6 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
     </div>
 
     <script>
-        function parseHeaders(headerText) {
-            const lines = headerText.split('\n');
-            const headers = {};
-            
-            lines.forEach(line => {
-                line = line.trim();
-                if (!line) return;
-                
-                line = line.replace(/^[<>]\s*/, '');
-                
-                const colonIndex = line.indexOf(':');
-                if (colonIndex > -1) {
-                    const key = line.substring(0, colonIndex).trim().toLowerCase();
-                    const value = line.substring(colonIndex + 1).trim();
-                    headers[key] = value;
-                }
-            });
-            
-            return headers;
-        }
-
         function parseFastlyDebugPath(pathHeader) {
             if (!pathHeader) return [];
             
@@ -444,14 +422,39 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
             return 'pass';
         }
 
-        function analyzeHeaders() {
-            const input = document.getElementById('headers-input').value;
-            if (!input.trim()) {
-                alert('Please paste some headers first!');
+        async function analyzeHeaders() {
+            const url = document.getElementById('url-input').value.trim();
+            if (!url) {
+                alert('Please enter a URL first!');
                 return;
             }
 
-            const headers = parseHeaders(input);
+            try { new URL(url); } catch {
+                alert('Please enter a valid URL (e.g. https://example.com)');
+                return;
+            }
+
+            const btn = document.getElementById('inspect-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Fetching…';
+
+            try {
+                const res = await fetch(`/fetch-headers?url=${encodeURIComponent(url)}`);
+                const data = await res.json();
+                if (!res.ok) {
+                    alert(`Error: ${data.error || 'Failed to fetch headers'}`);
+                    return;
+                }
+                renderResults(data.headers);
+            } catch (err) {
+                alert(`Failed to fetch headers: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Inspect Cache';
+            }
+        }
+
+        function renderResults(headers) {
             const debugPath = parseFastlyDebugPath(headers['fastly-debug-path']);
             const timer = parseXTimer(headers['x-timer']);
             const cacheStatus = headers['x-cache'];
@@ -479,6 +482,10 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
 
             html += `
                 <div class="status-hero">
+                    <div class="status-circle ${cdnClass}">
+                        <div>${cdnText}</div>
+                        <div class="status-label">CDN</div>
+                    </div>
                     <div class="status-circle ${statusClass}">
                         <div>${statusText}</div>
                         <div class="status-label">Cache Status</div>
@@ -706,13 +713,13 @@ x-timer: S1766557562.572454,VS0,VE44"></textarea>
         }
 
         function clearAll() {
-            document.getElementById('headers-input').value = '';
+            document.getElementById('url-input').value = '';
             document.getElementById('results').classList.remove('active');
             document.getElementById('results').innerHTML = '';
         }
 
-        document.getElementById('headers-input').addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        document.getElementById('url-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
                 analyzeHeaders();
             }
         });
