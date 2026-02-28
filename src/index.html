@@ -63,25 +63,51 @@
             font-size: 1.1rem;
         }
 
-        input[type="url"] {
-            width: 100%;
+        .url-input-group {
+            display: flex;
+            align-items: stretch;
+        }
+
+        #protocol-select {
+            padding: 1rem 0.75rem;
+            background: rgba(20, 20, 20, 0.9);
+            border: 2px solid #404040;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            color: #94a3b8;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: border-color 0.3s;
+        }
+
+        #protocol-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .url-input-group input {
+            flex: 1;
             padding: 1rem 1.25rem;
             background: rgba(20, 20, 20, 0.9);
             border: 2px solid #404040;
-            border-radius: 12px;
+            border-radius: 0 12px 12px 0;
             color: #f1f5f9;
             font-family: 'Courier New', monospace;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
 
-        input[type="url"]:focus {
+        .url-input-group input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        input[type="url"]::placeholder {
+        .url-input-group input::placeholder {
             color: #64748b;
         }
 
@@ -174,6 +200,55 @@
         }
 
         .status-circle.pass {
+            background: radial-gradient(circle, #64748b 0%, #475569 100%);
+            border-color: #94a3b8;
+            color: #f1f5f9;
+        }
+
+        /* CDN provider classes */
+        .status-circle.fastly {
+            background: radial-gradient(circle, #ff4747 0%, #cc1111 100%);
+            border-color: #ff6b6b;
+            color: #fff;
+        }
+
+        .status-circle.cloudflare {
+            background: radial-gradient(circle, #f6821f 0%, #d16a10 100%);
+            border-color: #fba55a;
+            color: #fff;
+        }
+
+        .status-circle.cloudfront {
+            background: radial-gradient(circle, #ff9900 0%, #e07b00 100%);
+            border-color: #ffbb44;
+            color: #fff;
+        }
+
+        .status-circle.akamai {
+            background: radial-gradient(circle, #009bde 0%, #0070a8 100%);
+            border-color: #44c2f4;
+            color: #fff;
+        }
+
+        .status-circle.varnish {
+            background: radial-gradient(circle, #4a9eca 0%, #2d7fa8 100%);
+            border-color: #7dc1e8;
+            color: #fff;
+        }
+
+        .status-circle.vercel {
+            background: radial-gradient(circle, #171717 0%, #000 100%);
+            border-color: #555;
+            color: #fff;
+        }
+
+        .status-circle.bunny {
+            background: radial-gradient(circle, #ff8c00 0%, #e06b00 100%);
+            border-color: #ffb347;
+            color: #fff;
+        }
+
+        .status-circle.cdn-unknown {
             background: radial-gradient(circle, #64748b 0%, #475569 100%);
             border-color: #94a3b8;
             color: #f1f5f9;
@@ -348,13 +423,19 @@
             <label class="input-label" for="url-input">
                 🔗 Enter URL to Inspect
             </label>
-            <input
-                type="url"
-                id="url-input"
-                placeholder="https://example.com/path"
-                autocomplete="off"
-                spellcheck="false"
-            />
+            <div class="url-input-group">
+                <select id="protocol-select">
+                    <option value="https://" selected>https://</option>
+                    <option value="http://">http://</option>
+                </select>
+                <input
+                    type="text"
+                    id="url-input"
+                    placeholder="example.com/path"
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+            </div>
             <div class="button-group">
                 <button class="btn-primary" id="inspect-btn" onclick="analyzeHeaders()">🔍 Inspect Cache</button>
                 <button class="btn-secondary" onclick="clearAll()">Clear</button>
@@ -422,15 +503,86 @@
             return 'pass';
         }
 
+        function detectCDN(headers) {
+            // Fastly: several proprietary headers, most reliable signal
+            if (
+                headers['x-served-by'] ||
+                headers['fastly-debug-path'] ||
+                headers['x-fastly-request-id'] ||
+                headers['x-cache-hits'] !== undefined
+            ) {
+                return { name: 'Fastly', cssClass: 'fastly' };
+            }
+
+            // Cloudflare
+            if (
+                headers['cf-ray'] ||
+                headers['cf-cache-status'] ||
+                (headers['server'] || '').toLowerCase().includes('cloudflare')
+            ) {
+                return { name: 'Cloudflare', cssClass: 'cloudflare' };
+            }
+
+            // AWS CloudFront
+            if (
+                headers['x-amz-cf-id'] ||
+                (headers['via'] || '').includes('cloudfront.net')
+            ) {
+                return { name: 'CloudFront', cssClass: 'cloudfront' };
+            }
+
+            // Akamai
+            if (
+                headers['x-akamai-request-id'] ||
+                headers['x-check-cacheable'] ||
+                headers['akamai-cache-status']
+            ) {
+                return { name: 'Akamai', cssClass: 'akamai' };
+            }
+
+            // BunnyCDN
+            if (
+                headers['cdn-pullzone'] ||
+                headers['cdn-uid'] ||
+                headers['cdn-requestid'] ||
+                headers['bunnycdn-cache-status']
+            ) {
+                return { name: 'BunnyCDN', cssClass: 'bunny' };
+            }
+
+            // Vercel
+            if (
+                headers['x-vercel-id'] ||
+                headers['x-vercel-cache'] ||
+                (headers['server'] || '').toLowerCase().includes('vercel')
+            ) {
+                return { name: 'Vercel', cssClass: 'vercel' };
+            }
+
+            // Generic Varnish (without Fastly markers)
+            if (
+                headers['x-varnish'] ||
+                (headers['via'] || '').toLowerCase().includes('varnish')
+            ) {
+                return { name: 'Varnish', cssClass: 'varnish' };
+            }
+
+            return { name: 'Unknown', cssClass: 'cdn-unknown' };
+        }
+
         async function analyzeHeaders() {
-            const url = document.getElementById('url-input').value.trim();
-            if (!url) {
+            const host = document.getElementById('url-input').value.trim();
+            if (!host) {
                 alert('Please enter a URL first!');
                 return;
             }
 
+            const protocol = document.getElementById('protocol-select').value;
+            // Allow pasting a full URL directly into the text field
+            const url = /^https?:\/\//i.test(host) ? host : protocol + host;
+
             try { new URL(url); } catch {
-                alert('Please enter a valid URL (e.g. https://example.com)');
+                alert('Please enter a valid URL (e.g. example.com/path)');
                 return;
             }
 
@@ -463,6 +615,11 @@
             const digest = headers['fastly-debug-digest'];
             
             let html = '';
+
+            // CDN detection
+            const cdn = detectCDN(headers);
+            const cdnText = cdn.name;
+            const cdnClass = cdn.cssClass;
 
             // Status Hero
             const statusType = getStatusType(cacheStatus);
@@ -713,6 +870,7 @@
         }
 
         function clearAll() {
+            document.getElementById('protocol-select').value = 'https://';
             document.getElementById('url-input').value = '';
             document.getElementById('results').classList.remove('active');
             document.getElementById('results').innerHTML = '';
