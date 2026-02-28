@@ -14,8 +14,6 @@ This app un-obfuscates the information that your CDN is sending back!
 * CDN detection seems to be not working
 * The text showing the number of hits for each cache node is hard to read because the colour is not very contrasted to the background.
 * The layout looks a bit big, perhaps it could be more compact. I am not a design expert however.
-* Change the mechanism for passing data around to make nicer code (or maybe use an existing reporting framework/library).
-* Add in some protection from abuse of the app. This should be both front end detection and detection in the compute app itself. Things like not allowing requests that loop, timeouts for requests that take too long, etc. 
 
 # DONEs
 
