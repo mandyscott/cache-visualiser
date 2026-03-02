@@ -1,0 +1,17 @@
+< HTTP/1.1 301 Moved Permanently
+< Connection: close
+< Content-Length: 0
+< Retry-After: 0
+< Accept-Ranges: bytes
+< Date: Sun, 01 Mar 2026 03:18:20 GMT
+< Via: 1.1 varnish
+< Fastly-Debug-Path: (D cache-tyo11964-TYO 1772335101)
+< Fastly-Debug-TTL: (M cache-tyo11964-TYO - - -)
+< Fastly-Debug-Digest: 5f4a6af23b4ed5436ec9516f0d619b4921ea80a01aca6e7f0fc60c0f218631f5
+< X-Served-By: cache-tyo11964-TYO
+< X-Cache: HIT
+< X-Cache-Hits: 0
+< Cache-Control: max-age=0, private, must-revalidate
+< Server: Artisanal bits
+< x-original-path: /
+< Location: https://www.fastly.com/

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache Inspector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f6f8fa;
+            color: #1f2328;
+            min-height: 100vh;
+            padding: 1.25rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1.75rem;
+            padding: 1.5rem 0 0.75rem;
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin-bottom: 0.35rem;
+            background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: #57606a;
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            font-size: 0.75rem;
+            color: #8c959f;
+            text-decoration: none;
+            padding: 0.25rem 0.6rem;
+            border: 1px solid #d0d7de;
+            border-radius: 20px;
+            transition: all 0.15s;
+        }
+
+        .theme-switch:hover {
+            background: #eaeef2;
+            color: #57606a;
+            border-color: #b4bfc9;
+        }
+
+        .input-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 0 0 1px #d0d7de;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #24292f;
+            font-size: 0.85rem;
+        }
+
+        .url-input-group {
+            display: flex;
+            align-items: stretch;
+        }
+
+        #protocol-select {
+            padding: 0.625rem 2rem 0.625rem 0.75rem;
+            background: #f6f8fa
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2357606a' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+                no-repeat right 0.6rem center;
+            border: 1.5px solid #d0d7de;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            color: #57606a;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        #protocol-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .url-input-group input {
+            flex: 1;
+            padding: 0.625rem 0.875rem;
+            background: #ffffff;
+            border: 1.5px solid #d0d7de;
+            border-radius: 0 8px 8px 0;
+            color: #1f2328;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .url-input-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .url-input-group input::placeholder {
+            color: #8c959f;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.625rem;
+            margin-top: 0.75rem;
+        }
+
+        button {
+            padding: 0.5rem 1.25rem;
+            border: 1.5px solid transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            flex: 1;
+            border-color: #2563eb;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #f6f8fa;
+            color: #24292f;
+            border-color: #d0d7de;
+        }
+
+        .btn-secondary:hover {
+            background: #eaeef2;
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        /* Status Hero */
+        .status-hero {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .status-circle {
+            width: 148px;
+            height: 148px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 800;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border: 3px solid;
+            position: relative;
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.015); }
+        }
+
+        .status-circle.hit {
+            background: #dcfce7;
+            border-color: #16a34a;
+            color: #14532d;
+        }
+
+        .status-circle.miss {
+            background: #fee2e2;
+            border-color: #dc2626;
+            color: #7f1d1d;
+        }
+
+        .status-circle.pass {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+            color: #334155;
+        }
+
+        /* CDN provider circles — brand colours softened for light background */
+        .status-circle.fastly {
+            background: #fff0f0;
+            border-color: #ef4444;
+            color: #7f1d1d;
+        }
+
+        .status-circle.cloudflare {
+            background: #fff7ed;
+            border-color: #f97316;
+            color: #7c2d12;
+        }
+
+        .status-circle.cloudfront {
+            background: #fffbeb;
+            border-color: #f59e0b;
+            color: #78350f;
+        }
+
+        .status-circle.akamai {
+            background: #eff6ff;
+            border-color: #2563eb;
+            color: #1e3a8a;
+        }
+
+        .status-circle.varnish {
+            background: #f0f9ff;
+            border-color: #0ea5e9;
+            color: #0c4a6e;
+        }
+
+        .status-circle.vercel {
+            background: #f9fafb;
+            border-color: #374151;
+            color: #111827;
+        }
+
+        .status-circle.bunny {
+            background: #fff7ed;
+            border-color: #ea580c;
+            color: #7c2d12;
+        }
+
+        .status-circle.cdn-unknown {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+            color: #475569;
+        }
+
+        .status-label {
+            font-size: 0.65rem;
+            margin-top: 0.3rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        /* Flow Diagram */
+        .flow-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 0 0 1px #d0d7de;
+        }
+
+        .flow-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 1.25rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .flow-diagram {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+            min-height: 160px;
+            flex-wrap: nowrap;
+            gap: 0;
+            padding-bottom: 2.25rem;
+        }
+
+        .flow-node {
+            position: relative;
+            z-index: 2;
+        }
+
+        .node {
+            width: 110px;
+            height: 110px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 2px solid;
+            position: relative;
+        }
+
+        .node-icon {
+            font-size: 1.75rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .node-label {
+            font-size: 0.68rem;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .node-detail {
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f6f8fa;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            white-space: nowrap;
+            border: 1px solid #d0d7de;
+            color: #57606a;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+
+        .flow-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex: 1;
+            min-width: 50px;
+        }
+
+        .arrow-line {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .arrow-shaft {
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, #2563eb, #0ea5e9);
+        }
+
+        .arrow-head {
+            width: 0;
+            height: 0;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid #0ea5e9;
+        }
+
+        .arrow-timing {
+            position: absolute;
+            top: -1.75rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2563eb;
+            color: #ffffff;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Cache Key */
+        .cache-key-visual {
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            background: #f6f8fa;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #d0d7de;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #57606a;
+        }
+
+        .fingerprint {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            h1 { font-size: 1.5rem; }
+            .status-circle { width: 125px; height: 125px; font-size: 1.5rem; }
+            .flow-diagram { flex-direction: column; gap: 3rem; }
+            .flow-arrow { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ Cache Inspector</h1>
+            <p class="subtitle">Visual diagnostics for your cache performance</p>
+            <a href="/" class="theme-switch">🌙 Switch to dark theme</a>
+        </header>
+
+        <div class="input-section">
+            <label class="input-label" for="url-input">
+                🔗 Enter URL to Inspect
+            </label>
+            <div class="url-input-group">
+                <select id="protocol-select">
+                    <option value="https://" selected>https://</option>
+                    <option value="http://">http://</option>
+                </select>
+                <input
+                    type="text"
+                    id="url-input"
+                    placeholder="example.com/path"
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" id="inspect-btn" onclick="analyzeHeaders()">🔍 Inspect Cache</button>
+                <button class="btn-secondary" onclick="clearAll()">Clear</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <!-- Results will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        function parseFastlyDebugPath(pathHeader) {
+            if (!pathHeader) return [];
+            const regex = /\(([A-Z])\s+([^\s]+)\s+([\d.]+)\)/g;
+            const paths = [];
+            let match;
+            while ((match = regex.exec(pathHeader)) !== null) {
+                paths.push({ type: match[1], location: match[2], timestamp: match[3] });
+            }
+            return paths;
+        }
+
+        function parseXTimer(timerHeader) {
+            if (!timerHeader) return null;
+            const parts = timerHeader.split(',');
+            const result = {};
+            parts.forEach(part => {
+                if (part.startsWith('VE')) result.vclEnd = parseInt(part.substring(2));
+                else if (part.startsWith('VS')) result.vclStart = parseInt(part.substring(2));
+                else if (part.startsWith('S')) result.startTime = parseFloat(part.substring(1));
+            });
+            return result;
+        }
+
+        function getStatusType(cacheStatus) {
+            if (!cacheStatus) return 'pass';
+            const statuses = cacheStatus.split(',').map(s => s.trim().toLowerCase());
+            if (statuses.some(s => s === 'hit')) return 'hit';
+            if (statuses.some(s => s === 'miss')) return 'miss';
+            return 'pass';
+        }
+
+        function detectCDN(headers) {
+            if (
+                headers['x-served-by'] || headers['fastly-debug-path'] ||
+                headers['x-fastly-request-id'] || headers['x-cache-hits'] !== undefined ||
+                (headers['x-timer'] && /^S[\d.]+,VS/.test(headers['x-timer']))
+            ) return { name: 'Fastly', cssClass: 'fastly' };
+
+            if (headers['cf-ray'] || headers['cf-cache-status'] ||
+                (headers['server'] || '').toLowerCase().includes('cloudflare'))
+                return { name: 'Cloudflare', cssClass: 'cloudflare' };
+
+            if (headers['x-amz-cf-id'] || (headers['via'] || '').includes('cloudfront.net'))
+                return { name: 'CloudFront', cssClass: 'cloudfront' };
+
+            if (headers['x-akamai-request-id'] || headers['x-check-cacheable'] || headers['akamai-cache-status'])
+                return { name: 'Akamai', cssClass: 'akamai' };
+
+            if (headers['cdn-pullzone'] || headers['cdn-uid'] || headers['cdn-requestid'] || headers['bunnycdn-cache-status'])
+                return { name: 'BunnyCDN', cssClass: 'bunny' };
+
+            if (headers['x-vercel-id'] || headers['x-vercel-cache'] ||
+                (headers['server'] || '').toLowerCase().includes('vercel'))
+                return { name: 'Vercel', cssClass: 'vercel' };
+
+            if (headers['x-varnish'] || (headers['via'] || '').toLowerCase().includes('varnish'))
+                return { name: 'Varnish', cssClass: 'varnish' };
+
+            return { name: 'Unknown', cssClass: 'cdn-unknown' };
+        }
+
+        async function analyzeHeaders() {
+            const host = document.getElementById('url-input').value.trim();
+            if (!host) { alert('Please enter a URL first!'); return; }
+
+            const protocol = document.getElementById('protocol-select').value;
+            const url = /^https?:\/\//i.test(host) ? host : protocol + host;
+
+            try { new URL(url); } catch {
+                alert('Please enter a valid URL (e.g. example.com/path)');
+                return;
+            }
+
+            const btn = document.getElementById('inspect-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Fetching…';
+
+            try {
+                const res = await fetch(`/fetch-headers?url=${encodeURIComponent(url)}`);
+                const data = await res.json();
+                if (!res.ok) { alert(`Error: ${data.error || 'Failed to fetch headers'}`); return; }
+                renderResults(data.headers);
+            } catch (err) {
+                alert(`Failed to fetch headers: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔍 Inspect Cache';
+            }
+        }
+
+        function renderResults(headers) {
+            const debugPath = parseFastlyDebugPath(headers['fastly-debug-path']);
+            const timer = parseXTimer(headers['x-timer']);
+            const cacheStatus = headers['x-cache'];
+            const servedBy = headers['x-served-by'];
+            const cacheHits = headers['x-cache-hits'];
+            const digest = headers['fastly-debug-digest'];
+
+            let html = '';
+
+            const cdn = detectCDN(headers);
+            const statusType = getStatusType(cacheStatus);
+
+            let statusText = 'UNKNOWN';
+            if (cacheStatus) {
+                const statuses = cacheStatus.split(',').map(s => s.trim().toLowerCase());
+                statusText = statuses.some(s => s === 'hit') ? 'HIT' : cacheStatus.split(',')[0].trim();
+            }
+
+            html += `
+                <div class="status-hero">
+                    <div class="status-circle ${cdn.cssClass}">
+                        <div>${cdn.name}</div>
+                        <div class="status-label">CDN</div>
+                    </div>
+                    <div class="status-circle ${statusType}">
+                        <div>${statusText}</div>
+                        <div class="status-label">Cache Status</div>
+                    </div>
+            `;
+
+            if (timer && timer.vclStart !== undefined && timer.vclEnd !== undefined) {
+                const vclTime = timer.vclEnd - timer.vclStart;
+                html += `
+                    <div class="status-circle" style="background:#f3e8ff; border-color:#a855f7; color:#581c87;">
+                        <div>${vclTime}ms</div>
+                        <div class="status-label">VCL Time</div>
+                    </div>
+                `;
+            }
+
+            if (cacheHits) {
+                const totalHits = cacheHits.split(',').reduce((sum, h) => sum + parseInt(h.trim() || 0), 0);
+                html += `
+                    <div class="status-circle" style="background:#e0f2fe; border-color:#0ea5e9; color:#0c4a6e;">
+                        <div>${totalHits}</div>
+                        <div class="status-label">Total Hits</div>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+
+            if (debugPath.length > 0 || servedBy) {
+                const pops = servedBy ? servedBy.split(',').map(s => s.trim()) : [];
+                const statuses = cacheStatus ? cacheStatus.split(',').map(s => s.trim()) : [];
+
+                let requestTimeHtml = '';
+                if (debugPath.length > 0 || (timer && timer.startTime)) {
+                    let startTime, endTime;
+                    if (debugPath.length > 0) startTime = new Date(parseFloat(debugPath[0].timestamp) * 1000);
+                    else if (timer && timer.startTime) startTime = new Date(timer.startTime * 1000);
+
+                    if (timer && timer.startTime && timer.vclEnd)
+                        endTime = new Date((timer.startTime * 1000) + timer.vclEnd);
+                    else if (debugPath.length > 0 && timer && timer.vclEnd)
+                        endTime = new Date((parseFloat(debugPath[0].timestamp) * 1000) + timer.vclEnd);
+
+                    const fmt = { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', fractionalSecondDigits:3, hour12:false };
+                    let diffHtml = '';
+                    if (startTime && endTime) {
+                        const ms = endTime - startTime;
+                        diffHtml = `<div style="margin-top:0.5rem;"><span style="background:#ede9fe;color:#5b21b6;border:1px solid #a855f7;padding:0.3rem 0.9rem;border-radius:8px;font-weight:700;font-size:0.9rem;">⏱ Total: ${ms.toFixed(1)}ms</span></div>`;
+                    }
+                    requestTimeHtml = `
+                        <div style="text-align:center;color:#57606a;font-size:0.82rem;margin-bottom:0.875rem;">
+                            <div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;">
+                                ${startTime ? `<div>🕐 <strong style="color:#2563eb;">Start:</strong> ${startTime.toLocaleString('en-US', fmt)}</div>` : ''}
+                                ${endTime   ? `<div>🕐 <strong style="color:#0ea5e9;">End:</strong>   ${endTime.toLocaleString('en-US', fmt)}</div>` : ''}
+                            </div>
+                            ${diffHtml}
+                        </div>`;
+                }
+
+                let cacheKeyHtml = '';
+                if (digest) {
+                    cacheKeyHtml = `
+                        <div style="text-align:center;margin-bottom:1rem;">
+                            <div class="cache-key-visual" style="display:inline-flex;max-width:600px;">
+                                <span class="fingerprint">🔐</span>
+                                <span style="flex:1;word-break:break-all;">${digest}</span>
+                            </div>
+                        </div>`;
+                }
+
+                let segmentTime = null;
+                if (timer && timer.vclEnd) segmentTime = Math.round(timer.vclEnd / Math.max(pops.length + 1, 1));
+
+                function getNodeStyle(status) {
+                    switch (status.toUpperCase()) {
+                        case 'HIT':  return { background:'#dcfce7', borderColor:'#16a34a', color:'#14532d' };
+                        case 'MISS': return { background:'#fee2e2', borderColor:'#dc2626', color:'#7f1d1d' };
+                        case 'PASS': return { background:'#f1f5f9', borderColor:'#94a3b8', color:'#334155' };
+                        default:     return { background:'#ede9fe', borderColor:'#7c3aed', color:'#4c1d95' };
+                    }
+                }
+
+                function arrowHtml(label) {
+                    return `
+                        <div class="flow-arrow">
+                            <div class="arrow-line">
+                                <div class="arrow-shaft"></div>
+                                <div class="arrow-head"></div>
+                            </div>
+                            ${label ? `<div class="arrow-timing">${label}</div>` : ''}
+                        </div>`;
+                }
+
+                const clientStyle = getNodeStyle('CLIENT');
+                html += `
+                    <div class="flow-container">
+                        <h2 class="flow-title">🌍 Request Journey</h2>
+                        ${requestTimeHtml}
+                        ${cacheKeyHtml}
+                        <div class="flow-diagram">
+                            <div class="flow-node">
+                                <div class="node" style="background:${clientStyle.background};border-color:${clientStyle.borderColor};color:${clientStyle.color};">
+                                    <div class="node-icon">👤</div>
+                                    <div class="node-label">Client</div>
+                                </div>
+                            </div>
+                `;
+
+                let sentToOrigin = false;
+                pops.forEach((pop, index) => {
+                    const status = statuses[index] || 'UNKNOWN';
+                    const hitsArr = cacheHits ? cacheHits.split(',') : [];
+                    const hits = hitsArr[index] !== undefined ? hitsArr[index].trim() : '0';
+                    if (status.toUpperCase() === 'MISS') sentToOrigin = true;
+
+                    const timingLabel = segmentTime ? `${segmentTime}ms` : '';
+                    html += arrowHtml(timingLabel);
+
+                    const ns = getNodeStyle(status);
+                    html += `
+                        <div class="flow-node">
+                            <div class="node" style="background:${ns.background};border-color:${ns.borderColor};color:${ns.color};">
+                                <div class="node-icon">🌐</div>
+                                <div class="node-label">${pop}</div>
+                                <div class="node-detail">${status} | ${hits} hits</div>
+                            </div>
+                        </div>`;
+                });
+
+                if (sentToOrigin) {
+                    html += arrowHtml('');
+                    html += `
+                        <div class="flow-node">
+                            <div class="node" style="background:#e0f2fe;border-color:#0ea5e9;color:#0c4a6e;">
+                                <div class="node-icon">🏢</div>
+                                <div class="node-label">Origin</div>
+                            </div>
+                        </div>`;
+                }
+
+                html += `</div></div>`;
+            }
+
+            document.getElementById('results').innerHTML = html;
+            document.getElementById('results').classList.add('active');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function clearAll() {
+            document.getElementById('protocol-select').value = 'https://';
+            document.getElementById('url-input').value = '';
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('results').innerHTML = '';
+        }
+
+        document.getElementById('url-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') analyzeHeaders();
+        });
+    </script>
+</body>
+</html>

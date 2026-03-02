@@ -1,0 +1,51 @@
+{
+	"fastly": {
+		"name": "Fastly",
+		"website": "https://www.fastly.com",
+		"description": "Fastly is a cloud platform that provides a content delivery network (CDN) and edge computing services. It helps businesses deliver their content quickly and securely to users around the world.",
+		"logo": "https://www.fastly.com/favicon.ico",
+		"headers": {
+			"server": "Fastly",
+			"x-fastly-request-id": "unique-request-id"
+		},
+		"debug-headers": {
+			"Fastly-Debug": "Debug information for Fastly CDN"
+		}
+	},
+	"vercel": {
+		"name": "Vercel",
+		"website": "https://vercel.com/",
+		"description": "Vercel is a cloud platform for static sites and serverless functions. It provides a global CDN and edge network to ensure fast and reliable delivery of web applications.",
+		"logo": "https://vercel.com/favicon.ico"
+	},
+	"bunnycdn": {
+		"name": "BunnyCDN",
+		"website": "https://bunnycdn.com",
+		"description": "BunnyCDN is a content delivery network (CDN) that offers fast and reliable delivery of web content. It provides a global network of servers to ensure low latency and high performance for websites and applications.",
+		"logo": "https://bunnycdn.com/favicon.ico"
+	},
+	"akamai": {
+		"name": "Akamai",
+		"website": "https://www.akamai.com",
+		"description": "Akamai is a global content delivery network (CDN) and cloud services provider. It offers a wide range of solutions for delivering web content, streaming media, and securing online applications.",
+		"logo": "https://www.akamai.com/favicon.ico"
+	},
+	"cloudflare": {
+		"name": "Cloudflare",
+		"website": "https://www.cloudflare.com",
+		"description": "Cloudflare is a web performance and security company that provides a content delivery network (CDN) and various security services. It helps protect and accelerate websites, APIs, and applications from cyber threats and performance issues.",
+		"logo": "https://www.cloudflare.com/favicon.ico"
+	},
+	"cloudfront": {
+		"name": "Amazon CloudFront",
+		"website": "https://aws.amazon.com/cloudfront",
+		"description": "Amazon CloudFront is a content delivery network (CDN) service provided by Amazon Web Services (AWS). It delivers data, videos, applications, and APIs to customers globally with low latency and high transfer speeds.",
+		"logo": "https://aws.amazon.com/favicon.ico"
+	},
+	"varnish": {
+		"name": "Varnish",
+		"website": "https://varnish-software.com",
+		"description": "Varnish is a web application accelerator and content delivery network (CDN) that helps improve the performance of websites and applications. It caches content and delivers it quickly to users, reducing server load and improving response times.",
+		"logo": "https://varnish-software.com/favicon.ico"
+	}
+}

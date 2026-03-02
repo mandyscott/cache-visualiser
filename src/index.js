@@ -3,6 +3,7 @@ import { includeBytes } from "fastly:experimental";
 import { Backend } from "fastly:backend";
 
 const htmlPage = includeBytes("./src/index.html");
+const htmlPageLight = includeBytes("./src/index-light.html");
 
 addEventListener("fetch", (event) => event.respondWith(handleRequest(event)));
 
@@ -24,13 +25,18 @@ async function handleRequest(event) {
       });
     }
 
-    // Serve HTML page for root path
+    // Serve HTML pages
     if (path === '/' || path === '') {
       return new Response(htmlPage, {
         status: 200,
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8'
-        }
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+      });
+    }
+
+    if (path === '/light') {
+      return new Response(htmlPageLight, {
+        status: 200,
+        headers: { 'Content-Type': 'text/html; charset=utf-8' }
       });
     }
 
@@ -69,7 +75,7 @@ async function handleRequest(event) {
         backend,
         headers: {
           'Fastly-Debug': '1',
-          'User-Agent': 'CacheInspector/1.0',
+          //                        'User-Agent': 'CacheInspector/1.0',
         }
       });
 
