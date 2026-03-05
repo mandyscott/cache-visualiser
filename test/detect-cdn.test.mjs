@@ -1,66 +1,30 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { join, dirname } from 'node:path';
 
-// Mirror of detectCDN() from src/index.html — keep in sync if the function changes.
+const registry = JSON.parse(
+    readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../data/cdns.json'), 'utf8')
+);
+
+// Mirror of the driver in src/index.js — keep in sync if the function changes.
+function evalRule(rule, headers) {
+    const val = headers[rule.header.toLowerCase()];
+    switch (rule.type) {
+        case 'header_exists':   return !!val;
+        case 'header_key_set':  return rule.header.toLowerCase() in headers;
+        case 'header_matches':  return !!val && new RegExp(rule.pattern).test(val);
+        case 'header_contains': return (val || '').toLowerCase().includes(rule.value.toLowerCase());
+        default: return false;
+    }
+}
+
 function detectCDN(headers) {
-    if (
-        headers['x-served-by'] ||
-        headers['fastly-debug-path'] ||
-        headers['x-fastly-request-id'] ||
-        headers['x-cache-hits'] !== undefined ||
-        (headers['x-timer'] && /^S[\d.]+,VS/.test(headers['x-timer']))
-    ) {
-        return { name: 'Fastly', cssClass: 'fastly' };
+    for (const [, cdn] of Object.entries(registry)) {
+        if ((cdn.detection || []).some(rule => evalRule(rule, headers)))
+            return { name: cdn.name, cssClass: cdn.cssClass };
     }
-
-    if (
-        headers['cf-ray'] ||
-        headers['cf-cache-status'] ||
-        (headers['server'] || '').toLowerCase().includes('cloudflare')
-    ) {
-        return { name: 'Cloudflare', cssClass: 'cloudflare' };
-    }
-
-    if (
-        headers['x-amz-cf-id'] ||
-        (headers['via'] || '').includes('cloudfront.net')
-    ) {
-        return { name: 'CloudFront', cssClass: 'cloudfront' };
-    }
-
-    if (
-        headers['Akamai-Grn'] ||
-        headers['x-akamai-request-id'] ||
-        headers['x-check-cacheable'] ||
-        headers['akamai-cache-status'] ||
-    ) {
-        return { name: 'Akamai', cssClass: 'akamai' };
-    }
-
-    if (
-        headers['cdn-pullzone'] ||
-        headers['cdn-uid'] ||
-        headers['cdn-requestid'] ||
-        headers['bunnycdn-cache-status']
-    ) {
-        return { name: 'BunnyCDN', cssClass: 'bunny' };
-    }
-
-    if (
-        headers['x-vercel-id'] ||
-        headers['x-vercel-cache'] ||
-        (headers['server'] || '').toLowerCase().includes('vercel')
-    ) {
-        return { name: 'Vercel', cssClass: 'vercel' };
-    }
-
-    if (
-        headers['x-varnish'] ||
-        (headers['via'] || '').toLowerCase().includes('varnish')
-    ) {
-        return { name: 'Varnish', cssClass: 'varnish' };
-    }
-
     return { name: 'Unknown', cssClass: 'cdn-unknown' };
 }
 
@@ -133,6 +97,11 @@ test('Akamai detected via x-akamai-request-id', () => {
 
 test('Akamai detected via x-check-cacheable', () => {
     const result = detectCDN({ 'x-check-cacheable': 'YES' });
+    assert.equal(result.name, 'Akamai');
+});
+
+test('Akamai detected via akamai-grn', () => {
+    const result = detectCDN({ 'akamai-grn': '0a1b2c3d' });
     assert.equal(result.name, 'Akamai');
 });
 

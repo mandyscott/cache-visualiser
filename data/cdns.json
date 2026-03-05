@@ -1,51 +1,152 @@
 {
 	"fastly": {
 		"name": "Fastly",
+		"cssClass": "fastly",
 		"website": "https://www.fastly.com",
 		"description": "Fastly is a cloud platform that provides a content delivery network (CDN) and edge computing services. It helps businesses deliver their content quickly and securely to users around the world.",
 		"logo": "https://www.fastly.com/favicon.ico",
-		"headers": {
-			"server": "Fastly",
-			"x-fastly-request-id": "unique-request-id"
+		"detection": [
+			{ "type": "header_exists",  "header": "x-served-by" },
+			{ "type": "header_exists",  "header": "fastly-debug-path" },
+			{ "type": "header_exists",  "header": "x-fastly-request-id" },
+			{ "type": "header_key_set", "header": "x-cache-hits" },
+			{ "type": "header_matches", "header": "x-timer", "pattern": "^S[\\d.]+,VS" }
+		],
+		"cacheHeaders": {
+			"status":    "x-cache",
+			"hits":      "x-cache-hits",
+			"servedBy":  "x-served-by",
+			"timer":     "x-timer",
+			"debugPath": "fastly-debug-path",
+			"digest":    "fastly-debug-digest"
 		},
-		"debug-headers": {
-			"Fastly-Debug": "Debug information for Fastly CDN"
+		"theme": {
+			"dark":  { "bgFrom": "#ff4747", "bgTo": "#cc1111", "border": "#ff6b6b", "text": "#fff" },
+			"light": { "bg": "#fff0f0", "border": "#ef4444", "text": "#7f1d1d" }
+		}
+	},
+	"cloudflare": {
+		"name": "Cloudflare",
+		"cssClass": "cloudflare",
+		"website": "https://www.cloudflare.com",
+		"description": "Cloudflare is a web performance and security company that provides a content delivery network (CDN) and various security services. It helps protect and accelerate websites, APIs, and applications from cyber threats and performance issues.",
+		"logo": "https://www.cloudflare.com/favicon.ico",
+		"detection": [
+			{ "type": "header_exists",   "header": "cf-ray" },
+			{ "type": "header_exists",   "header": "cf-cache-status" },
+			{ "type": "header_contains", "header": "server", "value": "cloudflare" }
+		],
+		"cacheHeaders": {
+			"status": "cf-cache-status",
+			"ray":    "cf-ray"
+		},
+		"theme": {
+			"dark":  { "bgFrom": "#f97316", "bgTo": "#c2410c", "border": "#fb923c", "text": "#fff" },
+			"light": { "bg": "#fff7ed", "border": "#f97316", "text": "#7c2d12" }
+		}
+	},
+	"cloudfront": {
+		"name": "CloudFront",
+		"cssClass": "cloudfront",
+		"website": "https://aws.amazon.com/cloudfront",
+		"description": "Amazon CloudFront is a content delivery network (CDN) service provided by Amazon Web Services (AWS). It delivers data, videos, applications, and APIs to customers globally with low latency and high transfer speeds.",
+		"logo": "https://aws.amazon.com/favicon.ico",
+		"detection": [
+			{ "type": "header_exists",   "header": "x-amz-cf-id" },
+			{ "type": "header_contains", "header": "via", "value": "cloudfront.net" }
+		],
+		"cacheHeaders": {
+			"status": "x-cache",
+			"id":     "x-amz-cf-id",
+			"pop":    "x-amz-cf-pop"
+		},
+		"theme": {
+			"dark":  { "bgFrom": "#f59e0b", "bgTo": "#b45309", "border": "#fbbf24", "text": "#fff" },
+			"light": { "bg": "#fffbeb", "border": "#f59e0b", "text": "#78350f" }
+		}
+	},
+	"akamai": {
+		"name": "Akamai",
+		"cssClass": "akamai",
+		"website": "https://www.akamai.com",
+		"description": "Akamai is a global content delivery network (CDN) and cloud services provider. It offers a wide range of solutions for delivering web content, streaming media, and securing online applications.",
+		"logo": "https://www.akamai.com/favicon.ico",
+		"detection": [
+			{ "type": "header_exists", "header": "akamai-grn" },
+			{ "type": "header_exists", "header": "x-akamai-request-id" },
+			{ "type": "header_exists", "header": "x-check-cacheable" },
+			{ "type": "header_exists", "header": "akamai-cache-status" }
+		],
+		"cacheHeaders": {
+			"status":    "akamai-cache-status",
+			"requestId": "x-akamai-request-id",
+			"grn":       "akamai-grn"
+		},
+		"theme": {
+			"dark":  { "bgFrom": "#0ea5e9", "bgTo": "#0369a1", "border": "#38bdf8", "text": "#fff" },
+			"light": { "bg": "#f0f9ff", "border": "#0ea5e9", "text": "#0c4a6e" }
+		}
+	},
+	"bunnycdn": {
+		"name": "BunnyCDN",
+		"cssClass": "bunny",
+		"website": "https://bunnycdn.com",
+		"description": "BunnyCDN is a content delivery network (CDN) that offers fast and reliable delivery of web content. It provides a global network of servers to ensure low latency and high performance for websites and applications.",
+		"logo": "https://bunnycdn.com/favicon.ico",
+		"detection": [
+			{ "type": "header_exists", "header": "cdn-pullzone" },
+			{ "type": "header_exists", "header": "cdn-uid" },
+			{ "type": "header_exists", "header": "cdn-requestid" },
+			{ "type": "header_exists", "header": "bunnycdn-cache-status" }
+		],
+		"cacheHeaders": {
+			"status":    "bunnycdn-cache-status",
+			"pullzone":  "cdn-pullzone",
+			"uid":       "cdn-uid",
+			"requestId": "cdn-requestid"
+		},
+		"theme": {
+			"dark":  { "bgFrom": "#ec4899", "bgTo": "#be185d", "border": "#f472b6", "text": "#fff" },
+			"light": { "bg": "#fdf2f8", "border": "#ec4899", "text": "#831843" }
 		}
 	},
 	"vercel": {
 		"name": "Vercel",
+		"cssClass": "vercel",
 		"website": "https://vercel.com/",
 		"description": "Vercel is a cloud platform for static sites and serverless functions. It provides a global CDN and edge network to ensure fast and reliable delivery of web applications.",
-		"logo": "https://vercel.com/favicon.ico"
-	},
-	"bunnycdn": {
-		"name": "BunnyCDN",
-		"website": "https://bunnycdn.com",
-		"description": "BunnyCDN is a content delivery network (CDN) that offers fast and reliable delivery of web content. It provides a global network of servers to ensure low latency and high performance for websites and applications.",
-		"logo": "https://bunnycdn.com/favicon.ico"
-	},
-	"akamai": {
-		"name": "Akamai",
-		"website": "https://www.akamai.com",
-		"description": "Akamai is a global content delivery network (CDN) and cloud services provider. It offers a wide range of solutions for delivering web content, streaming media, and securing online applications.",
-		"logo": "https://www.akamai.com/favicon.ico"
-	},
-	"cloudflare": {
-		"name": "Cloudflare",
-		"website": "https://www.cloudflare.com",
-		"description": "Cloudflare is a web performance and security company that provides a content delivery network (CDN) and various security services. It helps protect and accelerate websites, APIs, and applications from cyber threats and performance issues.",
-		"logo": "https://www.cloudflare.com/favicon.ico"
-	},
-	"cloudfront": {
-		"name": "Amazon CloudFront",
-		"website": "https://aws.amazon.com/cloudfront",
-		"description": "Amazon CloudFront is a content delivery network (CDN) service provided by Amazon Web Services (AWS). It delivers data, videos, applications, and APIs to customers globally with low latency and high transfer speeds.",
-		"logo": "https://aws.amazon.com/favicon.ico"
+		"logo": "https://vercel.com/favicon.ico",
+		"detection": [
+			{ "type": "header_exists",   "header": "x-vercel-id" },
+			{ "type": "header_exists",   "header": "x-vercel-cache" },
+			{ "type": "header_contains", "header": "server", "value": "vercel" }
+		],
+		"cacheHeaders": {
+			"status": "x-vercel-cache",
+			"id":     "x-vercel-id"
+		},
+		"theme": {
+			"dark":  { "bgFrom": "#475569", "bgTo": "#1e293b", "border": "#64748b", "text": "#fff" },
+			"light": { "bg": "#f8fafc", "border": "#475569", "text": "#0f172a" }
+		}
 	},
 	"varnish": {
 		"name": "Varnish",
+		"cssClass": "varnish",
 		"website": "https://varnish-software.com",
 		"description": "Varnish is a web application accelerator and content delivery network (CDN) that helps improve the performance of websites and applications. It caches content and delivers it quickly to users, reducing server load and improving response times.",
-		"logo": "https://varnish-software.com/favicon.ico"
+		"logo": "https://varnish-software.com/favicon.ico",
+		"detection": [
+			{ "type": "header_exists",   "header": "x-varnish" },
+			{ "type": "header_contains", "header": "via", "value": "varnish" }
+		],
+		"cacheHeaders": {
+			"status":  "x-cache",
+			"varnish": "x-varnish"
+		},
+		"theme": {
+			"dark":  { "bgFrom": "#10b981", "bgTo": "#065f46", "border": "#34d399", "text": "#fff" },
+			"light": { "bg": "#f0fdf4", "border": "#10b981", "text": "#14532d" }
+		}
 	}
 }

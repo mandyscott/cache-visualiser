@@ -511,36 +511,6 @@
             return 'pass';
         }
 
-        function detectCDN(headers) {
-            if (
-                headers['x-served-by'] || headers['fastly-debug-path'] ||
-                headers['x-fastly-request-id'] || headers['x-cache-hits'] !== undefined ||
-                (headers['x-timer'] && /^S[\d.]+,VS/.test(headers['x-timer']))
-            ) return { name: 'Fastly', cssClass: 'fastly' };
-
-            if (headers['cf-ray'] || headers['cf-cache-status'] ||
-                (headers['server'] || '').toLowerCase().includes('cloudflare'))
-                return { name: 'Cloudflare', cssClass: 'cloudflare' };
-
-            if (headers['x-amz-cf-id'] || (headers['via'] || '').includes('cloudfront.net'))
-                return { name: 'CloudFront', cssClass: 'cloudfront' };
-
-            if (headers['x-akamai-request-id'] || headers['x-check-cacheable'] || headers['akamai-cache-status'])
-                return { name: 'Akamai', cssClass: 'akamai' };
-
-            if (headers['cdn-pullzone'] || headers['cdn-uid'] || headers['cdn-requestid'] || headers['bunnycdn-cache-status'])
-                return { name: 'BunnyCDN', cssClass: 'bunny' };
-
-            if (headers['x-vercel-id'] || headers['x-vercel-cache'] ||
-                (headers['server'] || '').toLowerCase().includes('vercel'))
-                return { name: 'Vercel', cssClass: 'vercel' };
-
-            if (headers['x-varnish'] || (headers['via'] || '').toLowerCase().includes('varnish'))
-                return { name: 'Varnish', cssClass: 'varnish' };
-
-            return { name: 'Unknown', cssClass: 'cdn-unknown' };
-        }
-
         async function analyzeHeaders() {
             const host = document.getElementById('url-input').value.trim();
             if (!host) { alert('Please enter a URL first!'); return; }
@@ -561,7 +531,7 @@
                 const res = await fetch(`/fetch-headers?url=${encodeURIComponent(url)}`);
                 const data = await res.json();
                 if (!res.ok) { alert(`Error: ${data.error || 'Failed to fetch headers'}`); return; }
-                renderResults(data.headers);
+                renderResults(data.headers, data.cdn);
             } catch (err) {
                 alert(`Failed to fetch headers: ${err.message}`);
             } finally {
@@ -570,7 +540,7 @@
             }
         }
 
-        function renderResults(headers) {
+        function renderResults(headers, cdn = { name: 'Unknown', cssClass: 'cdn-unknown' }) {
             const debugPath = parseFastlyDebugPath(headers['fastly-debug-path']);
             const timer = parseXTimer(headers['x-timer']);
             const cacheStatus = headers['x-cache'];
@@ -580,7 +550,6 @@
 
             let html = '';
 
-            const cdn = detectCDN(headers);
             const statusType = getStatusType(cacheStatus);
 
             let statusText = 'UNKNOWN';

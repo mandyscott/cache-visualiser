@@ -5,6 +5,28 @@ import { Backend } from "fastly:backend";
 const htmlPage = includeBytes("./src/index.html");
 const htmlPageLight = includeBytes("./src/index-light.html");
 
+// Parse the CDN registry at startup — stays private inside the WASM binary.
+const registry = JSON.parse(new TextDecoder().decode(includeBytes("./data/cdns.json")));
+
+function evalRule(rule, headers) {
+  const val = headers[rule.header.toLowerCase()];
+  switch (rule.type) {
+    case 'header_exists':   return !!val;
+    case 'header_key_set':  return rule.header.toLowerCase() in headers;
+    case 'header_matches':  return !!val && new RegExp(rule.pattern).test(val);
+    case 'header_contains': return (val || '').toLowerCase().includes(rule.value.toLowerCase());
+    default: return false;
+  }
+}
+
+function detectCDN(headers) {
+  for (const [, cdn] of Object.entries(registry)) {
+    if ((cdn.detection || []).some(rule => evalRule(rule, headers)))
+      return { name: cdn.name, cssClass: cdn.cssClass };
+  }
+  return { name: 'Unknown', cssClass: 'cdn-unknown' };
+}
+
 addEventListener("fetch", (event) => event.respondWith(handleRequest(event)));
 
 async function handleRequest(event) {
@@ -84,7 +106,9 @@ async function handleRequest(event) {
         headers[key.toLowerCase()] = value;
       }
 
-      return new Response(JSON.stringify({ headers, status: headResponse.status }), {
+      const cdn = detectCDN(headers);
+
+      return new Response(JSON.stringify({ headers, status: headResponse.status, cdn }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });

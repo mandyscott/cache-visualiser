@@ -521,75 +521,6 @@
             return 'pass';
         }
 
-        function detectCDN(headers) {
-            // Fastly: several proprietary headers, most reliable signal
-            // x-timer format S<epoch>,VS<ms>,VE<ms> is unique to Fastly
-            if (
-                headers['x-served-by'] ||
-                headers['fastly-debug-path'] ||
-                headers['x-fastly-request-id'] ||
-                headers['x-cache-hits'] !== undefined ||
-                (headers['x-timer'] && /^S[\d.]+,VS/.test(headers['x-timer']))
-            ) {
-                return { name: 'Fastly', cssClass: 'fastly' };
-            }
-
-            // Cloudflare
-            if (
-                headers['cf-ray'] ||
-                headers['cf-cache-status'] ||
-                (headers['server'] || '').toLowerCase().includes('cloudflare')
-            ) {
-                return { name: 'Cloudflare', cssClass: 'cloudflare' };
-            }
-
-            // AWS CloudFront
-            if (
-                headers['x-amz-cf-id'] ||
-                (headers['via'] || '').includes('cloudfront.net')
-            ) {
-                return { name: 'CloudFront', cssClass: 'cloudfront' };
-            }
-
-            // Akamai
-            if (
-                headers['x-akamai-request-id'] ||
-                headers['x-check-cacheable'] ||
-                headers['akamai-cache-status']
-            ) {
-                return { name: 'Akamai', cssClass: 'akamai' };
-            }
-
-            // BunnyCDN
-            if (
-                headers['cdn-pullzone'] ||
-                headers['cdn-uid'] ||
-                headers['cdn-requestid'] ||
-                headers['bunnycdn-cache-status']
-            ) {
-                return { name: 'BunnyCDN', cssClass: 'bunny' };
-            }
-
-            // Vercel
-            if (
-                headers['x-vercel-id'] ||
-                headers['x-vercel-cache'] ||
-                (headers['server'] || '').toLowerCase().includes('vercel')
-            ) {
-                return { name: 'Vercel', cssClass: 'vercel' };
-            }
-
-            // Generic Varnish (without Fastly markers)
-            if (
-                headers['x-varnish'] ||
-                (headers['via'] || '').toLowerCase().includes('varnish')
-            ) {
-                return { name: 'Varnish', cssClass: 'varnish' };
-            }
-
-            return { name: 'Unknown', cssClass: 'cdn-unknown' };
-        }
-
         async function analyzeHeaders() {
             const host = document.getElementById('url-input').value.trim();
             if (!host) {
@@ -617,7 +548,7 @@
                     alert(`Error: ${data.error || 'Failed to fetch headers'}`);
                     return;
                 }
-                renderResults(data.headers);
+                renderResults(data.headers, data.cdn);
             } catch (err) {
                 alert(`Failed to fetch headers: ${err.message}`);
             } finally {
@@ -626,18 +557,16 @@
             }
         }
 
-        function renderResults(headers) {
+        function renderResults(headers, cdn = { name: 'Unknown', cssClass: 'cdn-unknown' }) {
             const debugPath = parseFastlyDebugPath(headers['fastly-debug-path']);
             const timer = parseXTimer(headers['x-timer']);
             const cacheStatus = headers['x-cache'];
             const servedBy = headers['x-served-by'];
             const cacheHits = headers['x-cache-hits'];
             const digest = headers['fastly-debug-digest'];
-            
+
             let html = '';
 
-            // CDN detection
-            const cdn = detectCDN(headers);
             const cdnText = cdn.name;
             const cdnClass = cdn.cssClass;
 
