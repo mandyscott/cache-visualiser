@@ -105,6 +105,16 @@ test('Akamai detected via akamai-grn', () => {
     assert.equal(result.name, 'Akamai');
 });
 
+test('Akamai detected via x-cache-status TCP_ prefix', () => {
+    const result = detectCDN({ 'x-cache-status': 'TCP_MISS from a23-203-53-33.deploy.akamaitechnologies.com (AkamaiGHost/22.4.3-90cfec5b1d9fb5e086ffb86de3f67006) (-)' });
+    assert.equal(result.name, 'Akamai');
+});
+
+test('Akamai detected via x-cache-status TCP_HIT', () => {
+    const result = detectCDN({ 'x-cache-status': 'TCP_HIT from a23-45-67-89.deploy.akamaitechnologies.com (AkamaiGHost)' });
+    assert.equal(result.name, 'Akamai');
+});
+
 // ─── BunnyCDN ─────────────────────────────────────────────────────────────────
 
 test('BunnyCDN detected via cdn-pullzone', () => {

@@ -569,7 +569,7 @@
                 const res = await fetch(`/fetch-headers?url=${encodeURIComponent(url)}`);
                 const data = await res.json();
                 if (!res.ok) { alert(`Error: ${data.error || 'Failed to fetch headers'}`); return; }
-                renderResults(data.headers, data.cdn);
+                renderResults(data.headers, data.cdn, data.cacheStatus, data.cacheHits);
             } catch (err) {
                 alert(`Failed to fetch headers: ${err.message}`);
             } finally {
@@ -578,12 +578,10 @@
             }
         }
 
-        function renderResults(headers, cdn = { name: 'Unknown', cssClass: 'cdn-unknown' }) {
+        function renderResults(headers, cdn = { name: 'Unknown', cssClass: 'cdn-unknown' }, cacheStatus = null, cacheHits = null) {
             const debugPath = parseFastlyDebugPath(headers['fastly-debug-path']);
             const timer = parseXTimer(headers['x-timer']);
-            const cacheStatus = headers['x-cache'];
             const servedBy = headers['x-served-by'];
-            const cacheHits = headers['x-cache-hits'];
             const digest = headers['fastly-debug-digest'];
 
             let html = '';

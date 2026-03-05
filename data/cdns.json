@@ -12,6 +12,9 @@
 			{ "type": "header_key_set", "header": "x-cache-hits" },
 			{ "type": "header_matches", "header": "x-timer", "pattern": "^S[\\d.]+,VS" }
 		],
+		"requestHeaders": {
+			"Fastly-Debug": "1"
+		},
 		"cacheHeaders": {
 			"status":    "x-cache",
 			"hits":      "x-cache-hits",
@@ -72,16 +75,29 @@
 		"description": "Akamai is a global content delivery network (CDN) and cloud services provider. It offers a wide range of solutions for delivering web content, streaming media, and securing online applications.",
 		"logo": "https://www.akamai.com/favicon.ico",
 		"detection": [
-			{ "type": "header_exists", "header": "akamai-grn" },
-			{ "type": "header_exists", "header": "x-akamai-request-id" },
-			{ "type": "header_exists", "header": "x-check-cacheable" },
-			{ "type": "header_exists", "header": "akamai-cache-status" }
+			{ "type": "header_exists",  "header": "akamai-grn" },
+			{ "type": "header_exists",  "header": "x-akamai-request-id" },
+			{ "type": "header_exists",  "header": "x-check-cacheable" },
+			{ "type": "header_exists",  "header": "akamai-cache-status" },
+			{ "type": "header_matches", "header": "x-cache-status", "pattern": "^TCP_" }
 		],
+		"requestHeaders": {
+			"Pragma": "akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-get-cache-key, akamai-x-get-true-cache-key"
+		},
 		"cacheHeaders": {
-			"status":    "akamai-cache-status",
+			"status":    "x-cache-status",
 			"requestId": "x-akamai-request-id",
 			"grn":       "akamai-grn"
 		},
+		"statusNormalization": [
+			{ "contains": "TCP_HIT",      "normalized": "HIT"  },
+			{ "contains": "RefreshHit",   "normalized": "HIT"  },
+			{ "contains": "HitStale",     "normalized": "HIT"  },
+			{ "contains": "TCP_MISS",     "normalized": "MISS" },
+			{ "contains": "NotCacheable", "normalized": "PASS" },
+			{ "contains": "Constructed",  "normalized": "PASS" },
+			{ "contains": "Error",        "normalized": "PASS" }
+		],
 		"theme": {
 			"dark":  { "bgFrom": "#0ea5e9", "bgTo": "#0369a1", "border": "#38bdf8", "text": "#fff" },
 			"light": { "bg": "#f0f9ff", "border": "#0ea5e9", "text": "#0c4a6e" }
@@ -100,7 +116,7 @@
 			{ "type": "header_exists", "header": "bunnycdn-cache-status" }
 		],
 		"cacheHeaders": {
-			"status":    "bunnycdn-cache-status",
+			"status":    "cdn-cache",
 			"pullzone":  "cdn-pullzone",
 			"uid":       "cdn-uid",
 			"requestId": "cdn-requestid"

@@ -7,8 +7,7 @@ This app un-obfuscates the information that your CDN is sending back!
 
 * Include chartjs, bootstrap, or tailwind.css.
 * Add in authentication in order to use the app e.g. sign in with google, github etc.
-* Add in test cases:
-	- A test for each CDN (and one that has no CDN) to check the display is working correctly for each.
+* Fix test cases to do a check the display is working correctly for each.
 * Cache status counter seems to be not working for any CDN except Fastly.
 * Hits counter seems to be not working for any CDN except Fastly.
 * The text showing the number of hits for each cache node is hard to read because the colour is not very contrasted to the background.
@@ -26,3 +25,6 @@ This app un-obfuscates the information that your CDN is sending back!
 * Change the mechanism for passing data around to make nicer code (or maybe use an existing reporting framework/library).
 * Put a little arrow to the left of the protocol box to indicate there are choices for the https/http box.
 * Reduce the spacing of elements and make it a bit more compact.
+* Add in test cases:
+	- A test for each CDN (and one that has no CDN).
+* Add in a dump of the headers as another element on the bottom of the page.

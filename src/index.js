@@ -8,6 +8,13 @@ const htmlPageLight = includeBytes("./src/index-light.html");
 // Parse the CDN registry at startup — stays private inside the WASM binary.
 const registry = JSON.parse(new TextDecoder().decode(includeBytes("./data/cdns.json")));
 
+// Merge all CDN-specific debug request headers so we send them all on every
+// outbound HEAD request (we don't know which CDN we'll hit in advance).
+const debugRequestHeaders = {};
+for (const cdn of Object.values(registry)) {
+  Object.assign(debugRequestHeaders, cdn.requestHeaders ?? {});
+}
+
 function evalRule(rule, headers) {
   const val = headers[rule.header.toLowerCase()];
   switch (rule.type) {
@@ -17,6 +24,14 @@ function evalRule(rule, headers) {
     case 'header_contains': return (val || '').toLowerCase().includes(rule.value.toLowerCase());
     default: return false;
   }
+}
+
+function normalizeCacheStatus(raw, cdnEntry) {
+  if (!raw || !cdnEntry?.statusNormalization) return raw;
+  for (const rule of cdnEntry.statusNormalization) {
+    if (raw.includes(rule.contains)) return rule.normalized;
+  }
+  return raw;
 }
 
 function detectCDN(headers) {
@@ -95,10 +110,7 @@ async function handleRequest(event) {
       const headResponse = await fetch(targetUrl, {
         method: 'HEAD',
         backend,
-        headers: {
-          'Fastly-Debug': '1',
-          //                        'User-Agent': 'CacheInspector/1.0',
-        }
+        headers: debugRequestHeaders,
       });
 
       const headers = {};
@@ -108,7 +120,16 @@ async function handleRequest(event) {
 
       const cdn = detectCDN(headers);
 
-      return new Response(JSON.stringify({ headers, status: headResponse.status, cdn }), {
+      // Resolve cache status and hits from the CDN's own header names
+      const cdnEntry = Object.values(registry).find(c => c.name === cdn.name);
+      const cacheHeaderMap = cdnEntry ? cdnEntry.cacheHeaders : {};
+      const cacheStatus = normalizeCacheStatus(
+        cacheHeaderMap.status ? (headers[cacheHeaderMap.status] ?? null) : null,
+        cdnEntry
+      );
+      const cacheHits   = cacheHeaderMap.hits   ? (headers[cacheHeaderMap.hits]   ?? null) : null;
+
+      return new Response(JSON.stringify({ headers, status: headResponse.status, cdn, cacheStatus, cacheHits }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
