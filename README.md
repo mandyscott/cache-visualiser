@@ -5,6 +5,7 @@ This app un-obfuscates the information that your CDN is sending back!
 
 # TODOs
 
+* Separate out the styles from the html code.
 * Include chartjs, bootstrap, or tailwind.css.
 * Add in authentication in order to use the app e.g. sign in with google, github etc.
 * Fix test cases to do a check the display is working correctly for each.
@@ -13,6 +14,12 @@ This app un-obfuscates the information that your CDN is sending back!
 * The text showing the number of hits for each cache node is hard to read because the colour is not very contrasted to the background.
 * The layout looks a bit big, perhaps it could be more compact. I am not a design expert however.
 * Add in some protection from abuse of the app. This should be both front end detection and detection in the compute app itself. Things like not allowing requests that loop, timeouts for requests that take too long, etc.
+* Add tests for each CDN for different scenarios:
+	* Hit
+	* Miss
+	* Pass
+	* etc
+* Add in a confidence score for each check low/medium/high or a number or %.
 
 # DONEs
 

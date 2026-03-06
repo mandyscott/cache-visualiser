@@ -1,9 +1,10 @@
 /// <reference types="@fastly/js-compute" />
 import { includeBytes } from "fastly:experimental";
 import { Backend } from "fastly:backend";
+import { CDN } from './cdn.mjs';
 
 const htmlPage = includeBytes("./src/index.html");
-const htmlPageLight = includeBytes("./src/index-light.html");
+const cssStyles = includeBytes("./src/styles.css");
 
 // Parse the CDN registry at startup — stays private inside the WASM binary.
 const registry = JSON.parse(new TextDecoder().decode(includeBytes("./data/cdns.json")));
@@ -27,19 +28,23 @@ function evalRule(rule, headers) {
 }
 
 function normalizeCacheStatus(raw, cdnEntry) {
+  console.log('Normalizing cache status:', { raw, cdn: cdnEntry?.name });
   if (!raw || !cdnEntry?.statusNormalization) return raw;
   for (const rule of cdnEntry.statusNormalization) {
-    if (raw.includes(rule.contains)) return rule.normalized;
+    if (raw.includes(rule.contains)) {
+      console.log('Found matching rule:', { contains: rule.contains, normalized: rule.normalized });
+      return rule.normalized;
+    }
   }
+  console.log('No matching rule found for cache status:', { raw, cdn: cdnEntry?.name });
   return raw;
 }
 
-function detectCDN(headers) {
-  for (const [, cdn] of Object.entries(registry)) {
-    if ((cdn.detection || []).some(rule => evalRule(rule, headers)))
-      return { name: cdn.name, cssClass: cdn.cssClass };
-  }
-  return { name: 'Unknown', cssClass: 'cdn-unknown' };
+function detectTimings(headers, cdnEntry) {
+  const cacheStatusCheck = cdnEntry?.cacheStatusCheck?? {};
+  const timer = cacheStatusCheck.timer ? (headers[cacheStatusCheck.timer] ?? null) : null;
+  const age   = headers['age'] ?? null;
+  return { timer, age };
 }
 
 addEventListener("fetch", (event) => event.respondWith(handleRequest(event)));
@@ -70,10 +75,10 @@ async function handleRequest(event) {
       });
     }
 
-    if (path === '/light') {
-      return new Response(htmlPageLight, {
+    if (path === '/styles.css') {
+      return new Response(cssStyles, {
         status: 200,
-        headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        headers: { 'Content-Type': 'text/css; charset=utf-8' }
       });
     }
 
@@ -107,6 +112,8 @@ async function handleRequest(event) {
         betweenBytesTimeout: 10000,
       });
 
+      console.log(debugRequestHeaders);
+
       const headResponse = await fetch(targetUrl, {
         method: 'HEAD',
         backend,
@@ -118,18 +125,15 @@ async function handleRequest(event) {
         headers[key.toLowerCase()] = value;
       }
 
-      const cdn = detectCDN(headers);
+      const cdn = new CDN();
+      cdnEntry = cdn.detectCDN(headers);
 
-      // Resolve cache status and hits from the CDN's own header names
-      const cdnEntry = Object.values(registry).find(c => c.name === cdn.name);
-      const cacheHeaderMap = cdnEntry ? cdnEntry.cacheHeaders : {};
-      const cacheStatus = normalizeCacheStatus(
-        cacheHeaderMap.status ? (headers[cacheHeaderMap.status] ?? null) : null,
-        cdnEntry
-      );
-      const cacheHits   = cacheHeaderMap.hits   ? (headers[cacheHeaderMap.hits]   ?? null) : null;
+//      const { status: cacheStatus, hits: cacheHits } = cdn.detectCacheStatus(headers, cdnEntry);
+      const cacheStatus = cdn.detectCacheStatus(headers, cdnEntry)?.status ?? null;
+      const cacheHits = cdn.detectCacheHits                     (headers, cdnEntry)?.hits ?? null;
+      const timings = detectTimings(headers, cdnEntry);
 
-      return new Response(JSON.stringify({ headers, status: headResponse.status, cdn, cacheStatus, cacheHits }), {
+      return new Response(JSON.stringify({ headers, status: headResponse.status, cdn, cacheStatus, cacheHits, timings }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });

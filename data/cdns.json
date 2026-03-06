@@ -5,7 +5,7 @@
 		"website": "https://www.fastly.com",
 		"description": "Fastly is a cloud platform that provides a content delivery network (CDN) and edge computing services. It helps businesses deliver their content quickly and securely to users around the world.",
 		"logo": "https://www.fastly.com/favicon.ico",
-		"detection": [
+		"cdnDetection": [
 			{ "type": "header_exists",  "header": "x-served-by" },
 			{ "type": "header_exists",  "header": "fastly-debug-path" },
 			{ "type": "header_exists",  "header": "x-fastly-request-id" },
@@ -15,7 +15,7 @@
 		"requestHeaders": {
 			"Fastly-Debug": "1"
 		},
-		"cacheHeaders": {
+		"cacheStatusChecks": {
 			"status":    "x-cache",
 			"hits":      "x-cache-hits",
 			"servedBy":  "x-served-by",
@@ -34,12 +34,12 @@
 		"website": "https://www.cloudflare.com",
 		"description": "Cloudflare is a web performance and security company that provides a content delivery network (CDN) and various security services. It helps protect and accelerate websites, APIs, and applications from cyber threats and performance issues.",
 		"logo": "https://www.cloudflare.com/favicon.ico",
-		"detection": [
+		"cdnDetection": [
 			{ "type": "header_exists",   "header": "cf-ray" },
 			{ "type": "header_exists",   "header": "cf-cache-status" },
 			{ "type": "header_contains", "header": "server", "value": "cloudflare" }
 		],
-		"cacheHeaders": {
+		"cacheStatusChecks": {
 			"status": "cf-cache-status",
 			"ray":    "cf-ray"
 		},
@@ -54,11 +54,11 @@
 		"website": "https://aws.amazon.com/cloudfront",
 		"description": "Amazon CloudFront is a content delivery network (CDN) service provided by Amazon Web Services (AWS). It delivers data, videos, applications, and APIs to customers globally with low latency and high transfer speeds.",
 		"logo": "https://aws.amazon.com/favicon.ico",
-		"detection": [
+		"cdnDetection": [
 			{ "type": "header_exists",   "header": "x-amz-cf-id" },
 			{ "type": "header_contains", "header": "via", "value": "cloudfront.net" }
 		],
-		"cacheHeaders": {
+		"cacheStatusChecks": {
 			"status": "x-cache",
 			"id":     "x-amz-cf-id",
 			"pop":    "x-amz-cf-pop"
@@ -74,29 +74,28 @@
 		"website": "https://www.akamai.com",
 		"description": "Akamai is a global content delivery network (CDN) and cloud services provider. It offers a wide range of solutions for delivering web content, streaming media, and securing online applications.",
 		"logo": "https://www.akamai.com/favicon.ico",
-		"detection": [
-			{ "type": "header_exists",  "header": "akamai-grn" },
-			{ "type": "header_exists",  "header": "x-akamai-request-id" },
-			{ "type": "header_exists",  "header": "x-check-cacheable" },
-			{ "type": "header_exists",  "header": "akamai-cache-status" },
-			{ "type": "header_matches", "header": "x-cache-status", "pattern": "^TCP_" }
+		"cdnDetection": [
+			{ "type": "header_matches", "header": "x-cache", "pattern": "^[A-Za-z_]+.*" }
 		],
 		"requestHeaders": {
-			"Pragma": "akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-get-cache-key, akamai-x-get-true-cache-key"
+			"Pragma": "akamai-x-cache-on, akamai-x-cache-remote-on, akamai-x-get-cache-key, akamai-x-get-true-cache-key",
+			"Akamai-Debug": "cache vars"
 		},
-		"cacheHeaders": {
-			"status":    "x-cache-status",
+		"cacheStatusChecks": {
+			"status":    "x-cache",	
+			"cacheable": "x-check-cacheable",
 			"requestId": "x-akamai-request-id",
 			"grn":       "akamai-grn"
 		},
 		"statusNormalization": [
-			{ "contains": "TCP_HIT",      "normalized": "HIT"  },
-			{ "contains": "RefreshHit",   "normalized": "HIT"  },
-			{ "contains": "HitStale",     "normalized": "HIT"  },
-			{ "contains": "TCP_MISS",     "normalized": "MISS" },
+			{ "contains": "TCP_HIT", "normalized": "HIT"  },
+			{ "contains": "RefreshHit", "normalized": "HIT"  },
+			{ "contains": "HitStale", "normalized": "HIT"  },
+			{ "contains": "TCP_MISS", "normalized": "MISS" },
 			{ "contains": "NotCacheable", "normalized": "PASS" },
-			{ "contains": "Constructed",  "normalized": "PASS" },
-			{ "contains": "Error",        "normalized": "PASS" }
+			{ "contains": "Constructed", "normalized": "PASS" },
+			{ "contains": "Error", "normalized": "PASS" },
+			{ "contains": "TCP_DENIED", "normalized": "DENIED" }
 		],
 		"theme": {
 			"dark":  { "bgFrom": "#0ea5e9", "bgTo": "#0369a1", "border": "#38bdf8", "text": "#fff" },
@@ -109,13 +108,13 @@
 		"website": "https://bunnycdn.com",
 		"description": "BunnyCDN is a content delivery network (CDN) that offers fast and reliable delivery of web content. It provides a global network of servers to ensure low latency and high performance for websites and applications.",
 		"logo": "https://bunnycdn.com/favicon.ico",
-		"detection": [
+		"cdnDetection": [
 			{ "type": "header_exists", "header": "cdn-pullzone" },
 			{ "type": "header_exists", "header": "cdn-uid" },
 			{ "type": "header_exists", "header": "cdn-requestid" },
 			{ "type": "header_exists", "header": "bunnycdn-cache-status" }
 		],
-		"cacheHeaders": {
+		"cacheStatusChecks": {
 			"status":    "cdn-cache",
 			"pullzone":  "cdn-pullzone",
 			"uid":       "cdn-uid",
@@ -132,12 +131,12 @@
 		"website": "https://vercel.com/",
 		"description": "Vercel is a cloud platform for static sites and serverless functions. It provides a global CDN and edge network to ensure fast and reliable delivery of web applications.",
 		"logo": "https://vercel.com/favicon.ico",
-		"detection": [
-			{ "type": "header_exists",   "header": "x-vercel-id" },
-			{ "type": "header_exists",   "header": "x-vercel-cache" },
-			{ "type": "header_contains", "header": "server", "value": "vercel" }
+		"cdnDetection": [
+			{ "check": "cdn", "type": "header_exists",   "header": "x-vercel-id" },
+			{ "check": "cdn", "type": "header_exists",   "header": "x-vercel-cache" },
+			{ "check": "cdn", "type": "header_contains", "header": "server", "value": "vercel" }
 		],
-		"cacheHeaders": {
+		"cacheStatusChecks": {
 			"status": "x-vercel-cache",
 			"id":     "x-vercel-id"
 		},
@@ -149,20 +148,29 @@
 	"varnish": {
 		"name": "Varnish",
 		"cssClass": "varnish",
-		"website": "https://varnish-software.com",
+		"website": "https://vinyl-cache.org/",
 		"description": "Varnish is a web application accelerator and content delivery network (CDN) that helps improve the performance of websites and applications. It caches content and delivers it quickly to users, reducing server load and improving response times.",
-		"logo": "https://varnish-software.com/favicon.ico",
-		"detection": [
-			{ "type": "header_exists",   "header": "x-varnish" },
-			{ "type": "header_contains", "header": "via", "value": "varnish" }
+		"logo": "https://vinyl-cache.org/_static/vinyl-cache-symbol-crop-square.svg",
+		"cdnDetection": [
+			{ "type": "header_exists", "header": "x-varnish" },
+			{ "type": "header_contains", "header": "server", "value": "varnish" }
 		],
-		"cacheHeaders": {
-			"status":  "x-cache",
-			"varnish": "x-varnish"
-		},
+		"cacheStatusCheck": { "type": "header_matches", "header": "x-varnish", "pattern": "^([\\d]+)\\s([\\d]+)$" },
+		"cacheAgeCheck": { "type": "header_matches", "header": "age", "pattern": "^([\\d]+)$" },
 		"theme": {
 			"dark":  { "bgFrom": "#10b981", "bgTo": "#065f46", "border": "#34d399", "text": "#fff" },
 			"light": { "bg": "#f0fdf4", "border": "#10b981", "text": "#14532d" }
 		}
+	},
+	"unknown": {
+		"name": "Unknown",
+		"cssClass": "unknown",
+		"website": "#",
+		"description": "The CDN used for this response could not be identified based on the response headers. This may be for many reasons, such as the CDN does not add any identifiable headers, or this site has removed any identification headers, or because it's a custom or lesser-known CDN that isn't included in the registry.",
+		"logo": "#",
+		"theme": {
+			"dark":  { "bgFrom": "#6b7280", "bgTo": "#111827", "border": "#9ca3af", "text": "#fff" },
+			"light": { "bg": "#f9fafb", "border": "#6b7280", "text": "#111827" }
+		}
 	}
-}
+}				
