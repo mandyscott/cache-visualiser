@@ -15,7 +15,7 @@
 		"requestHeaders": {
 			"Fastly-Debug": "1"
 		},
-		"cacheStatusCheck": { "type": "header_exists", "header": "x-cache" },
+		"cacheStatusCheck": { "type": "header_exists", "header": "x-varnish" },
 		"cacheStatusChecks": {
 			"status":    "x-cache",
 			"hits":      "x-cache-hits",
@@ -31,7 +31,7 @@
 	},
 	"cloudflare": {
 		"name": "Cloudflare",
-		"cssClass": "cloudflare",
+		"cssClass": "cloudflare",													
 		"website": "https://www.cloudflare.com",
 		"description": "Cloudflare is a web performance and security company that provides a content delivery network (CDN) and various security services. It helps protect and accelerate websites, APIs, and applications from cyber threats and performance issues.",
 		"logo": "https://www.cloudflare.com/favicon.ico",
