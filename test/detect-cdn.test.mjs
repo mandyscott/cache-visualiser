@@ -4,6 +4,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 
+import { CDN } from './cdn.mjs';
+
 const registry = JSON.parse(
     readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../data/cdns.json'), 'utf8')
 );

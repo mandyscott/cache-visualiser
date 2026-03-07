@@ -6,46 +6,8 @@ import { CDN } from './cdn.mjs';
 const htmlPage = includeBytes("./src/index.html");
 const cssStyles = includeBytes("./src/styles.css");
 
-// Parse the CDN registry at startup — stays private inside the WASM binary.
+// Parse the CDN registry to the WASM binary
 const registry = JSON.parse(new TextDecoder().decode(includeBytes("./data/cdns.json")));
-
-// Merge all CDN-specific debug request headers so we send them all on every
-// outbound HEAD request (we don't know which CDN we'll hit in advance).
-const debugRequestHeaders = {};
-for (const cdn of Object.values(registry)) {
-  Object.assign(debugRequestHeaders, cdn.requestHeaders ?? {});
-}
-
-function evalRule(rule, headers) {
-  const val = headers[rule.header.toLowerCase()];
-  switch (rule.type) {
-    case 'header_exists':   return !!val;
-    case 'header_key_set':  return rule.header.toLowerCase() in headers;
-    case 'header_matches':  return !!val && new RegExp(rule.pattern).test(val);
-    case 'header_contains': return (val || '').toLowerCase().includes(rule.value.toLowerCase());
-    default: return false;
-  }
-}
-
-function normalizeCacheStatus(raw, cdnEntry) {
-  console.log('Normalizing cache status:', { raw, cdn: cdnEntry?.name });
-  if (!raw || !cdnEntry?.statusNormalization) return raw;
-  for (const rule of cdnEntry.statusNormalization) {
-    if (raw.includes(rule.contains)) {
-      console.log('Found matching rule:', { contains: rule.contains, normalized: rule.normalized });
-      return rule.normalized;
-    }
-  }
-  console.log('No matching rule found for cache status:', { raw, cdn: cdnEntry?.name });
-  return raw;
-}
-
-function detectTimings(headers, cdnEntry) {
-  const cacheStatusCheck = cdnEntry?.cacheStatusCheck?? {};
-  const timer = cacheStatusCheck.timer ? (headers[cacheStatusCheck.timer] ?? null) : null;
-  const age   = headers['age'] ?? null;
-  return { timer, age };
-}
 
 addEventListener("fetch", (event) => event.respondWith(handleRequest(event)));
 
@@ -112,12 +74,12 @@ async function handleRequest(event) {
         betweenBytesTimeout: 10000,
       });
 
-      console.log(debugRequestHeaders);
-
+      /* BEGIN CDN detection */
+      const cdn = new CDN(registry);
       const headResponse = await fetch(targetUrl, {
         method: 'HEAD',
         backend,
-        headers: debugRequestHeaders,
+        headers: cdn.debugRequestHeaders,
       });
 
       const headers = {};
@@ -125,13 +87,12 @@ async function handleRequest(event) {
         headers[key.toLowerCase()] = value;
       }
 
-      const cdn = new CDN();
-      cdnEntry = cdn.detectCDN(headers);
+      cdn.detectCDN(headers);
+      const cacheStatus = cdn.detectCacheStatus()?.cacheStatus ?? null;
+      const cacheHits = cdn.detectCacheHits()?.hits ?? null;
+      const timings = {}; // cdn.detectTimings();
+      /* END CDN detection */
 
-//      const { status: cacheStatus, hits: cacheHits } = cdn.detectCacheStatus(headers, cdnEntry);
-      const cacheStatus = cdn.detectCacheStatus(headers, cdnEntry)?.status ?? null;
-      const cacheHits = cdn.detectCacheHits                     (headers, cdnEntry)?.hits ?? null;
-      const timings = detectTimings(headers, cdnEntry);
 
       return new Response(JSON.stringify({ headers, status: headResponse.status, cdn, cacheStatus, cacheHits, timings }), {
         status: 200,
