@@ -1,0 +1,17 @@
+< HTTP/2 200 
+< content-type: text/html;charset=utf-8
+< date: Sat, 07 Mar 2026 09:26:01 GMT
+< set-cookie: aws-priv=eyJ2IjoxLCJldSI6MCwic3QiOjB9; Version=1; Comment="Anonymous cookie for privacy regulations"; Domain=.aws.amazon.com; Max-Age=31536000; Expires=Sun, 07 Mar 2027 09:26:01 GMT; Path=/; Secure
+< set-cookie: aws_lang=en; Domain=.amazon.com; Path=/
+< x-content-type-options: nosniff
+< server: Server
+< x-frame-options: SAMEORIGIN
+< x-xss-protection: 1; mode=block
+< strict-transport-security: max-age=47304000; includeSubDomains
+< x-amz-id-1: 5D9DFC20A26342DAA2CB
+< last-modified: Sat, 07 Mar 2026 01:51:29 GMT
+< vary: accept-encoding
+< x-cache: Miss from cloudfront
+< via: 1.1 c951e19d4b5948f3bf888af72c1a5f9c.cloudfront.net (CloudFront)
+< x-amz-cf-pop: NRT57-P1
+< x-amz-cf-id: d8JfLG2q9z3u2ze2lI_CU8IeICflY9bxiC8X28Yiz4Qb0acAqSNuCA==

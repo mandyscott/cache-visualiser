@@ -1,0 +1,24 @@
+< HTTP/2 200 
+< date: Sat, 07 Mar 2026 09:26:45 GMT
+< content-type: text/html; charset=utf-8
+< vary: accept-encoding
+< strict-transport-security: max-age=31536000; includeSubDomains
+< permissions-policy: geolocation=(), camera=(), microphone=()
+< referrer-policy: strict-origin-when-cross-origin
+< x-content-type-options: nosniff
+< x-frame-options: SAMEORIGIN
+< x-xss-protection: 1; mode=block
+< x-rm: GW
+< set-cookie: cf_willow_version_key=a885a8af-de38-4e26-8c6f-e5df21ba5fb6; Path=/; SameSite=Strict; Secure; HttpOnly
+< set-cookie: _cfms_willow=enable; Max-Age=1209600; path=/; domain=.www.cloudflare.com; SameSite=Strict; Secure
+< set-cookie: _ga=GA1.1.35542d21-9f3f-4b4d-9592-b4f1844058d2; Domain=.cloudflare.com; Expires=Wed, 07 Apr 2027 09:26:44 GMT; Path=/
+< set-cookie: cfz_google-analytics_v4={"nzcr_ga4":{"v":"35542d21-9f3f-4b4d-9592-b4f1844058d2","e":1807090004897}}; Domain=.cloudflare.com; Expires=Wed Apr 07 2027 09:26:44 GMT+0000 (Coordinated Universal Time); HttpOnly; SameSite=Lax; Path=/; Secure
+< set-cookie: cfz_adobe={"MsVJ_ecid":{"v":"CiY4NjUyOTc2MzE1NjAwNDc3MDkyNjE1NzQ1MjM1MjcwMjAyODQ5NVIOCITJ-7zMMyoDVkE2MALwAYTJ-7zMMw==","e":1807003605080}}; Domain=.cloudflare.com; Expires=Tue Apr 06 2027 09:26:45 GMT+0000 (Coordinated Universal Time); HttpOnly; SameSite=Lax; Path=/; Secure
+< set-cookie: kndctr_8AD56F28618A50850A495FB6_AdobeOrg_identity=CiY4NjUyOTc2MzE1NjAwNDc3MDkyNjE1NzQ1MjM1MjcwMjAyODQ5NVIOCITJ-7zMMyoDVkE2MALwAYTJ-7zMMw==; Domain=.cloudflare.com; Expires=Tue, 06 Apr 2027 09:26:45 GMT; Path=/; Secure; SameSite=Lax
+< set-cookie: __cf_bm=GXhFnGEqGd1ueOePduEi20d7oxuVVt02aAOS4VyIIa0-1772875604.8844588-1.0.1.1-LMp1pzcvi2Lm8B7fWed5T7BqofqSDf19ikgdJs24wKAghK_dy9TDYtqWN1L8vlUng3QhPM5PfveAjvU5c1wBGJpE6F_byy4.BNpqEKC97njzaho0CC.WoktQhNix.l6nLktn7GhmuM__Y6G6Yus8rQ; HttpOnly; Secure; Path=/; Domain=www.cloudflare.com; Expires=Sat, 07 Mar 2026 09:56:45 GMT
+{ [5 bytes data]
+< report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=64spEBFQXdYO93duJUFFDbW1anx7IAxh0kQVq1cTMnE0MsyfxPhld77D%2FXp5qJkYPj%2FKzUzDyI5KyI8STL5RvTZqu3L7v174mpa8Vj1oZ7ETTwiB5buXiwLugboA"}]}
+< nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+< server: cloudflare
+< cf-ray: 9d888f728a058e04-NRT
+< alt-svc: h3=":443"; ma=86400

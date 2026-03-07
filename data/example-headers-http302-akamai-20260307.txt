@@ -1,0 +1,18 @@
+< HTTP/1.1 302 Moved Temporarily
+< Content-Length: 0
+< Location: https://akamai.com/ja
+< Cache-Control: max-age=0
+< Date: Sat, 07 Mar 2026 09:20:47 GMT
+< Alt-Svc: h3=":443"; ma=93600
+< Connection: keep-alive
+< Set-Cookie: language=ja; expires=Sun, 07-Mar-2027 09:20:47 GMT; secure
+< Strict-Transport-Security: max-age=31536000 ; includeSubDomains ; preload
+< expect-ct: max-age=3600, report-uri=https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T
+< nel: {"report_to":"default","max_age":3600,"include_subdomains":true}
+< content-security-policy-report-only: report-uri https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T
+< report-to: {"max_age":3600,"endpoints":[{"url":"https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T"}],"include_subdomains":true}
+< X-Content-Type-Options: nosniff
+< X-XSS-Protection: 1; mode=block; report=https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T
+< X-Frame-Options: SAMEORIGIN
+< Akamai-GRN: 0.6e91c817.1772875247.bb81161
+< Server-Timing: ak_p; desc="1772875247136_399020398_196612449_34_2915_78_81_-";dur=1

@@ -21,7 +21,7 @@ export class CDN {
 			const hits = rule.hits ? (this.requestHeaders[rule.hits] ?? null) : null;
 			return { hits };
 		}
-		return { hits: null };
+		return 0;
 	}
 
 	// By this point we have a better idea which CDN we're dealing with, so we can apply any CDN-specific logic to extract cache status and timing info.
@@ -31,7 +31,7 @@ export class CDN {
 			const cacheStatus = this.normalizeCacheStatus(this.requestHeaders[rule.header.toLowerCase()] ?? null);
 			return { cacheStatus };
 		}
-		return { cacheStatus: null };
+		return null;
 	}
 
 	// Loop through all the scenarios for each CDN and see if any match the incoming response headers.

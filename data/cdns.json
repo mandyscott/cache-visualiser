@@ -151,7 +151,7 @@
 			"light": { "bg": "#f8fafc", "border": "#475569", "text": "#0f172a" }
 		}
 	},
-	"varnish": {
+	"vinyl (aka: varnish)": {
 		"name": "Varnish",
 		"cssClass": "varnish",
 		"website": "https://vinyl-cache.org/",

@@ -1,0 +1,27 @@
+accept-ch DPR, Width, Viewport-Width, Downlink, Save-Data
+akamai-grn 0.8f813417.1772875802.3cb9ab9
+alt-svc h3=":443"; ma=93600
+cache-control max-age=604800
+content-encoding gzip
+content-length 29314
+content-security-policy-report-only report-uri https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T
+content-type text/html;charset=utf-8
+date Sat, 07 Mar 2026 09:30:02 GMT
+expect-ct max-age=3600, report-uri=https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T
+link <https://assets.adobedtm.com>;rel="preconnect",<https://static.ads-twitter.com>;rel="preconnect",<https://bat.bing.com>;rel="preconnect",<https://www.googleadservices.com>;rel="preconnect",<https://rum.hlx.page>;rel="preconnect",<https://pixel.byspotify.com>;rel="preconnect",<https://munchkin.marketo.net>;rel="preconnect",<https://sc.lfeeder.com>;rel="preconnect"
+link <https://www.akamai.com/content/dam/site/fonts/icomoon.woff2>;rel="preload";as="font";type="font/woff2";crossorigin,<https://www.akamai.com/site/fonts/icomoon.woff2>;rel="preload";as="font";type="font/woff2";crossorigin,<https://www.akamai.com/etc.clientlibs/akamai/clientlibs/clientlib-base/resources/fonts/Roboto-Regular.woff2>;rel="preload";as="font";type="font/woff2";crossorigin,<https://www.akamai.com/etc.clientlibs/akamai/clientlibs/clientlib-base/resources/fonts/Roboto-Medium.woff2>;rel="preload";as="font";type="font/woff2";crossorigin,<https://www.akamai.com/etc.clientlibs/akamai/clientlibs/clientlib-base/resources/fonts/Roboto-Bold.woff2>;rel="preload";as="font";type="font/woff2";crossorigin
+nel {"report_to":"default","max_age":3600,"include_subdomains":true}
+quic-version 0x00000001
+report-to {"max_age":3600,"endpoints":[{"url":"https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T"}],"include_subdomains":true}
+server-timing edge; dur=1
+server-timing cdn-cache; desc=HIT
+server-timing ak_p; desc="1772875802180_389317007_63675065_57_20642_-_-_-";dur=1
+set-cookie bm_sv=DEFEEFD9E28E1607754E5F80ECA08B02~YAAQj4E0F1fbIL2cAQAAfOahxx+6aal2wOX+agqNK+bJFpEEHIzMyMwQ/hXIcJuKu3WZY8A3k102AKbR6XgMJHl40c21icWKVJ6p4uAJo1zqQo7t5E+3g+n5B5KT3bQUEtA/TcNh8EGMCk8tQzRxAUGxLdgvgqw3IQx2XLR9FHGSoGysblj6rSyy0dvECDorFRVReiQCWCt9Vc3gpX4ZCal5mQ0rf6mYjWOzvXWF/jeC/O8xOqrA0ZbPU8ulTvWUrA==~1; Domain=.akamai.com; Path=/; Expires=Sat, 07 Mar 2026 11:21:55 GMT; Max-Age=6713; Secure
+set-cookie bm_sz=1BC743A0EB264F04CD97228D7F327E33~YAAQj4E0F1jbIL2cAQAAfOahxx/nCJ6yTmF4cbOzwgwONqA3gqPSdwB/8xX6fGUYsOIGc0CgHWvFG5vj15tE2RIGx0nR3Z9Xslo0uVdCtNsS3qFuR3JNED8EF7h8YFwi34P6yJe6DWJjcgseSmsIT18Ta9aHNPlB/UmyLR6e7JIk7GOVLVDQh3Dv+cuugCB34wJ3YBto/2uqGiFp7qpjmb3eeppe4N5IybBUqU25deLdGk2wI36yRF+/hctG8umHV1AKNAYu4DMbSJiKLLaMGmMigHS0yo6zyuQok+lq2hn3oianjJACqQWPBeDUIL6zo5COmVQpbyca1LXztVZRYea2DQ/zaKNT4EFZAhUSNXEZJXD87cLPqlZOFazYVwWoIetBVtkoHUN6sN45SWI9+xmOYXMwtn97a3Oz94XQRn93swn53sW3FXzh5tFKspMytl6H9PHSZtMZf2sz8I9dOhQ94T80xA==~3684656~3163193; Domain=.akamai.com; Path=/; Expires=Sat, 07 Mar 2026 13:21:55 GMT; Max-Age=13913
+strict-transport-security max-age=31536000 ; includeSubDomains ; preload
+vary Accept-Encoding
+x-akam-sw-version 0.5.0
+x-akamai-transformed 9l 169555 0 pmb=mNONE,1mRUM,4
+x-content-type-options nosniff
+x-frame-options SAMEORIGIN
+x-xss-protection 1; mode=block; report=https://reporting.go-mpulse.net/report/FDSGP-LEB9B-T8Y2A-5V5ED-9WX2T
